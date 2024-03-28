@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuessMyDraw</title>
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <div class="container">
+    <div class="drawing-area">
+      <canvas id="canvas" width="400" height="300"></canvas>
+    </div>
+    <div class="word-to-guess">
+      <h2>Faites deviner le mot :</h2>
+      <p id="word">Pomme</p>
+    </div>
+    <div class="guess-input">
+      <input type="text" id="guessInput" placeholder="Entrez votre réponse">
+      <button id="submitGuess">Soumettre</button>
+    </div>
+    <div class="messages">
+      <h2>Messages :</h2>
+      <ul id="messageList">
+        <!-- Les messages du jeu seront ajoutés ici -->
+      </ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
