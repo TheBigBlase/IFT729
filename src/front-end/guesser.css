@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .drawing-area {
+    margin-bottom: 20px;
+  }
+  
+  .word-to-guess {
+    margin-bottom: 20px;
+  }
+  
+  .guess-input {
+    margin-bottom: 20px;
+  }
+  
+  .messages {
+    width: 400px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .messages h2 {
+    margin-top: 0;
+  }
+  
+  #canvas {
+    border: 1px solid #000;
+  }
+  
+  #messageList {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  #messageList li {
+    margin-bottom: 5px;
+  }
+  
