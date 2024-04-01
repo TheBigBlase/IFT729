@@ -2,8 +2,10 @@ const express = require('express');
 const { join } = require('node:path');
 
 const app = express();
+let cors = require('cors')
 
 app.use(express.static(__dirname));
+app.use(cors());
 
 app.get('/drawer', (req, res) => {
   res.sendFile(join(__dirname, 'drawer.html'));
