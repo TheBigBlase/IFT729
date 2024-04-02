@@ -1,15 +1,3 @@
-//#include "utils.hpp"
-//#include <iostream>
-//
-//int
-//main()
-//{
-//	Server srv = Server(8888);
-//}
-//
-
-
-//
 // Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -72,7 +60,7 @@ do_session(tcp::socket socket)
 
             // Echo the message back
             ws.text(ws.got_text());
-			std::cout << buffer.data().data() << std::endl;
+			std::cout << static_cast<char*>(buffer.data().data()) << std::endl;
             ws.write(buffer.data());
         }
     }

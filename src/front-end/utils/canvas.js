@@ -47,5 +47,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         console.log(`Coordonnées du pixel cliqué : (${x}, ${y})`);
+		socket.send(`PX:${x}:${y}`);
     }
 });

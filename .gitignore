@@ -2,3 +2,5 @@ sandbox/
 build
 **/.vs/
 /vsProjet
+node_modules
+package-lock.json
