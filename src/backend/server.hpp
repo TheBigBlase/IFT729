@@ -1,29 +1,36 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
-#include <zmq.hpp>
-#include <zmq_addon.hpp>
+
+#include <boost/beast/core.hpp>
+#include <boost/beast/websocket.hpp>
+#include <boost/asio/ip/tcp.hpp>
+
+namespace beast = boost::beast;         // from <boost/beast.hpp>
+namespace http = beast::http;           // from <boost/beast/http.hpp>
+namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
+namespace net = boost::asio;            // from <boost/asio.hpp>
+namespace ip = boost::asio::ip;            // from <boost/asio.hpp>
+using tcp = boost::asio::ip::tcp;
+
 
 #include <cstdint>
 
 //TODO all is in main atm
-//class Server {
-//    public:
-//	uint16_t port;
-//
-//	Server(uint16_t p);
-//	~Server();
-//
-//	void do_receive();
-//	void do_send();
-//
-//    private:
-//	enum { max_len = 1024 };
-//	zmq::socket_t socket;
-//	zmq::context_t context;
-//
-//	zmq::message_t msg;
-//	zmq::recv_result_t res;
-//	zmq::mutable_buffer data;
-//};
+class Server {
+    public:
+
+	Server(ip::address add, uint16_t p);
+	~Server();
+
+	void run_forever();
+
+    private:
+	uint16_t port;
+	ip::address address;
+	net::io_context context;
+	tcp::acceptor acceptor;
+
+	void do_session(tcp::socket);
+};
 
 #endif
