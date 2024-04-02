@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-	const socket = io("ws://localhost:8888")
-
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -49,6 +47,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         console.log(`Coordonnées du pixel cliqué : (${x}, ${y})`);
-		socket.emit(`Coordonnées du pixel cliqué : (${x}, ${y})`);
+		socket.send(`PX:${x}:${y}`);
     }
 });

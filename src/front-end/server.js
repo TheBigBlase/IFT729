@@ -2,10 +2,15 @@ const express = require('express');
 const { join } = require('node:path');
 
 const app = express();
-let cors = require('cors')
+const cors = require('cors')
 
+app.use(
+  cors({
+	  // TODO change that to more precise
+	  origin: "*",
+  })
+)
 app.use(express.static(__dirname));
-app.use(cors());
 
 app.get('/drawer', (req, res) => {
   res.sendFile(join(__dirname, 'drawer.html'));
@@ -22,4 +27,3 @@ app.get('/', (req, res) => {
 app.listen(3000, () => {
   console.log('server running at http://localhost:3000');
 });
-
