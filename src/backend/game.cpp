@@ -1,27 +1,24 @@
 #include<string>
 #include"game.hpp"
-#include "player.hpp"
 
-Game::Game(string _creator, string _creatorSocket) {
-	creator = _creator;
-	drawer = _creator;
-	state = WAITING_FOR_WORD;
-	players.insert(pair<string, string>(_creator, _creatorSocket));
+Game::Game(Player *p) : creator{ p }, drawer { p }, state { WAITING_FOR_WORD } {
+	players.push_back(p);
 	wordToGuess = "";
 }
 
-int Game::addPlayer(string playerName, string playerSocket) {
-	if (players.find(playerName) == players.end()) {
+// TODO should be bool
+int Game::addPlayer(Player *p) {
+	if (std::find(std::begin(players), std::end(players), p) == players.end()) {
 		return 1;
 	}
 	
-	players.insert(pair<string, string>(playerName, playerSocket));
+	players.push_back(p);
 	return 0;
 
 }
 
-int Game::setWord(string playerName, string word) {
-	if (playerName != drawer) {
+int Game::setWord(Player &p, string word) {
+	if (&p != drawer) {
 		return 1;
 	}
 	if (state != WAITING_FOR_WORD){
@@ -33,28 +30,36 @@ int Game::setWord(string playerName, string word) {
 }
 
 
-int Game::guess(string playerName, string guessedWord) {
+int Game::guess(Player &p, string guessedWord) {
 	if (guessedWord == wordToGuess) {
-		return gameOver(playerName);
+		return gameOver(p);
 	}
 	// TODO envoyer que t'es poche
-	guessList.push_back(pair<string, string>(guessedWord, playerName));
+	guessList.push_back(pair<string, Player &>(guessedWord, p));
+	sendWordToAll("", p, guessedWord);
 	return 0;
 }
 
-int Game::gameOver(string winner) {
+int Game::gameOver(Player &p) {
 
 	// TODO envoyer la bonne nouvelle
-	cout << "winner : " << winner << endl;
-	drawer = winner;
+	cout << "winner : " << p.name << endl;
+	drawer = &p;
 	wordToGuess = "";
 	state = WAITING_FOR_WORD;
+	// NOTE need ret value?
 	return 0;
 }
 
-int Game::sendWordToAll(string code, string player, string word)
+int Game::sendWordToAll(string code, Player &player, string word)
 {
 	// Code qui va servir a envoyer les mots a tous
+	// TODO what's a code
+	for_each(std::begin(players), std::end(players), 
+			[&word, &player](Player *p){ 
+				if (p != &player)
+					p->send_message(word); 
+			});
 	return 0;
 }
 

@@ -32,7 +32,7 @@ class Server {
 	ip::address address;
 	net::io_context context;
 	tcp::acceptor acceptor;
-	std::vector<std::thread> threads;
+	std::vector<Player*> players;
 
 	void do_session(tcp::socket, Player *p);
 };

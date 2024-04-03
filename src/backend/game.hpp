@@ -1,5 +1,7 @@
 #ifndef game_H
 #define game_H
+
+#include "player.hpp"
 #include<map>
 #include<vector>
 #include<string>
@@ -19,23 +21,24 @@ class Game
 	};
 
 	// Gestion des joueurs
-	string creator;
-	string drawer;
-	map<string, string> players; // <nom du joueur, truc de connection?>
+	Player *creator;
+	Player *drawer;
+	std::vector<Player *> players; // <nom du joueur, truc de connection?>
 
 	//Gestion de la partie
 	State state;
 	string wordToGuess;
-	vector<pair<string, string>> guessList; // <guess, nomDuJoueur> on peut preallouer pour accelerer surment
+	vector<pair<string, Player &>> guessList; // <guess, nomDuJoueur> on peut preallouer pour accelerer surment
 
 
 public:
-	Game(string creator, string _creatorSocket);
-	int guess(string player, string guessedWord);
-	int sendWordToAll(string code, string player, string word);
-	int addPlayer(string player, string playerSocket);
-	int setWord(string player, string word);
-	int gameOver(string winner);
+	// TODO use smart pointer, probably
+	Game(Player *creator);
+	int guess(Player &, string guessedWord);
+	int sendWordToAll(string code, Player &player, string word);
+	int addPlayer(Player *player);
+	int setWord(Player &player, string word);
+	int gameOver(Player &); // player ?
 };
 
 #endif
