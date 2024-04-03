@@ -9,6 +9,8 @@ project(
 
 set(src
 	server.cpp
+	player.cpp
+	game.cpp
 	main.cpp
 	)
 

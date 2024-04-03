@@ -1,6 +1,5 @@
 #include "server.hpp"
 #include <iostream>
-#include <thread>
 
 // TODO all is in main atm
 Server::Server(ip::address add, uint16_t p)
@@ -9,15 +8,18 @@ Server::Server(ip::address add, uint16_t p)
     , context {}
     , acceptor { context, { address, port } }
 {
+	std::cout << "Server listening to " << address << ":" << port;
 }
 
+// TODO
 Server::~Server()
 {
+	
 }
 
 // Echoes back all received WebSocket messages
 void
-Server::do_session(tcp::socket socket)
+Server::do_session(tcp::socket socket, Player *p)
 {
 	try {
 		// Construct the stream by moving in the socket
@@ -55,6 +57,7 @@ Server::do_session(tcp::socket socket)
 				  << std::endl;
 	}
 }
+
 void
 Server::run_forever()
 {
@@ -67,7 +70,7 @@ Server::run_forever()
 
 		// Launch the session, transferring ownership of the socket
 		// TODO player?
-		std::thread(&Server::do_session, this, std::move(socket)).detach();
+		Player *p = new Player(num_users);
+		threads.push_back(std::thread(&Server::do_session, this, std::move(socket), std::move(p)));
 	}
 }
-

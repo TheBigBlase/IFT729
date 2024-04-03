@@ -1,5 +1,6 @@
 #include<string>
 #include"game.hpp"
+#include "player.hpp"
 
 Game::Game(string _creator, string _creatorSocket) {
 	creator = _creator;
@@ -81,4 +82,4 @@ int main(int argc, char* argv[])
 	//cout << "Rejoindre mauvaise partie par " << player2 << isOk(logique->joinGame(player2, player2, "llllll"));
 	//cout << "Rejoindre partie par " << player2 << isOk(logique->joinGame(player2, player2, player1));
 
-}
+}*/
