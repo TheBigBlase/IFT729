@@ -11,7 +11,7 @@ int Game::addPlayer(Player *p) {
 	if (std::find(std::begin(players), std::end(players), p) == players.end()) {
 		return 1;
 	}
-	
+
 	players.push_back(p);
 	return 0;
 
@@ -55,10 +55,10 @@ int Game::sendWordToAll(string code, Player &player, string word)
 {
 	// Code qui va servir a envoyer les mots a tous
 	// TODO what's a code
-	for_each(std::begin(players), std::end(players), 
-			[&word, &player](Player *p){ 
+	for_each(std::begin(players), std::end(players),
+			[&word, &player](Player *p){
 				if (p != &player)
-					p->send_message(word); 
+					p->send_message(word);
 			});
 	return 0;
 }

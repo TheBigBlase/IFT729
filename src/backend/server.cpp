@@ -8,7 +8,8 @@ Server::Server(ip::address add, uint16_t p)
     , context {}
     , acceptor { context, { address, port } }
 {
-	std::cout << "Server listening to " << address << ":" << port;
+	std::cout << "Server listening to " << address << ":" << port
+		  << std::endl;
 }
 
 // TODO
@@ -27,8 +28,7 @@ Server::run_forever()
 		acceptor.accept(socket);
 
 		// Launch the session, transferring ownership of the socket
-		// TODO player?
-		Player *p = new Player(num_users, std::move(socket));
-		players.push_back(p);
+		std::make_shared<Player>(num_users, std::move(socket))->run();
+		context.run();
 	}
 }

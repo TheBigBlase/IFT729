@@ -1,5 +1,5 @@
 // cors ? 
-const address = 'ws://dream:8888';
+const address = 'ws://localhost:8888';
 let socket = new WebSocket(address);
 
 // leaving this as example of how to get response
@@ -35,4 +35,8 @@ function handle_message(msg) {
 
 socket.onmessage = (msg) => {
 	console.log(msg);
+}
+
+socket.onopen = () =>  {
+	console.log("Socket connected")
 }
