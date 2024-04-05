@@ -16,13 +16,13 @@ using tcp = boost::asio::ip::tcp;
 class Server {
 	using value_t = int;
 
-    public:
-	Server(ip::address add, uint16_t p);
+  public:
+	Server(ip::address, uint16_t);
 	~Server();
 
 	void run_forever();
 
-    private:
+  private:
 	inline static value_t num_users = 0;
 	uint16_t port;
 	ip::address address;
@@ -30,6 +30,6 @@ class Server {
 	tcp::acceptor acceptor;
 	std::vector<Player::sptr> players;
 
-	void do_session(tcp::socket, Player *p);
+	void on_accept(tcp::socket*, const boost::system::error_code&);
 };
 #endif

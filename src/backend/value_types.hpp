@@ -6,4 +6,3 @@ using value_t = int;
 using pixel_t = uint8_t;
 
 #endif
-
