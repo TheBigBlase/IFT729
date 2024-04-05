@@ -15,7 +15,7 @@ function handle_message(msg) {
 	switch (res[0]) {
 		case "PX":
 			break
-		case "MSG":
+		case "MSSG":
 			break
 		case "WIN":
 			break

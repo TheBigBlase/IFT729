@@ -54,8 +54,7 @@ void Player::handle_input(std::vector<std::string> in) {
 	case PX:
 		// client has drawn a new px
 		break;
-	case MSG:
-		game->sendWordToAll("", *this, in[1]);
+	case MSSG:
 		// client has sent a message / submitted a guess
 		break;
 	case JOIN:
@@ -91,7 +90,8 @@ void Player::handle_input(std::vector<std::string> in) {
 
 void Player::send_room() {
 	ws.text(ws.got_text());
-	do_write(std::format("ROOM:{}", game->getName()));
+	ws.async_write(boost::asio::buffer(std::format("MSSG:{}", msg)),
+	    beast::bind_front_handler(&Player::on_write, shared_from_this()));
 }
 
 void Player::send_pixel(pixel_t x, pixel_t y) {

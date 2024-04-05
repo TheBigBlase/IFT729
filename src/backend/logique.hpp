@@ -1,4 +1,4 @@
-#ifndef Logique_H
+/*#ifndef Logique_H
 #define Logique_H
 
 #include "game.hpp"
@@ -28,4 +28,4 @@ class Logique {
 	int joinGame(string playerName, string playerSocket, string gameId);
 };
 
-#endif
+#endif*
