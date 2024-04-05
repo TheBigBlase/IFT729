@@ -1,4 +1,4 @@
-#ifndef Logique_H
+/*#ifndef Logique_H
 #define Logique_H
 
 #include <map>
@@ -30,4 +30,4 @@ public:
 
 };
 
-#endif
+#endif*

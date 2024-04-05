@@ -17,7 +17,7 @@ string_to_int(const char *s)
 
 enum messages {
 	PX		= string_to_int(static_cast<const char *>("PX")),
-	MSG		= string_to_int(static_cast<const char *>("MSG")),
+	MSSG		= string_to_int(static_cast<const char *>("MSSG")),
 	WIN		= string_to_int(static_cast<const char *>("WIN")),
 	JOIN	= string_to_int(static_cast<const char *>("JOIN")),
 	NEWROOM	= string_to_int(static_cast<const char *>("NEWROOM")),
