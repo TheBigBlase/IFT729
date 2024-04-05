@@ -1,9 +1,11 @@
-#include<string>
-#include"game.hpp"
+#include "game.hpp"
+#include <iostream>
+#include <string>
 
-Game::Game(Player *p) : creator{ p }, drawer { p }, state { WAITING_FOR_WORD } {
+Game::Game(Player *p) : creator{p}, drawer{p}, state{WAITING_FOR_WORD} {
 	players.push_back(p);
 	wordToGuess = "";
+	name = std::format("{}'s room", p->name);
 }
 
 // TODO should be bool
@@ -14,21 +16,19 @@ int Game::addPlayer(Player *p) {
 
 	players.push_back(p);
 	return 0;
-
 }
 
 int Game::setWord(Player &p, string word) {
 	if (&p != drawer) {
 		return 1;
 	}
-	if (state != WAITING_FOR_WORD){
+	if (state != WAITING_FOR_WORD) {
 		return 1;
 	}
 	wordToGuess = word;
 	state = ON_GOING;
 	return 0;
 }
-
 
 int Game::guess(Player &p, string guessedWord) {
 	if (guessedWord == wordToGuess) {
@@ -43,7 +43,7 @@ int Game::guess(Player &p, string guessedWord) {
 int Game::gameOver(Player &p) {
 
 	// TODO envoyer la bonne nouvelle
-	cout << "winner : " << p.name << endl;
+	std::cout << "winner : " << p.name << endl;
 	drawer = &p;
 	wordToGuess = "";
 	state = WAITING_FOR_WORD;
@@ -51,17 +51,18 @@ int Game::gameOver(Player &p) {
 	return 0;
 }
 
-int Game::sendWordToAll(string code, Player &player, string word)
-{
+int Game::sendWordToAll(string code, Player &player, string word) {
 	// Code qui va servir a envoyer les mots a tous
 	// TODO what's a code
 	for_each(std::begin(players), std::end(players),
-			[&word, &player](Player *p){
-				if (p != &player)
-					p->send_message(word);
-			});
+			 [&word, &player](Player *p) {
+				 if (p != &player)
+					 p->send_message(word);
+			 });
 	return 0;
 }
+
+std::string Game::getName() { return name; }
 
 /*#include<iostream>
 #include"logique.hpp"
@@ -82,9 +83,12 @@ int main(int argc, char* argv[])
 	string socket2 = "WhoCares";
 
 
-	//cout << "Creation de partie par " << player1 << isOk(logique->createGame(player1, socket1));
+	//cout << "Creation de partie par " << player1 <<
+isOk(logique->createGame(player1, socket1));
 
-	//cout << "Rejoindre mauvaise partie par " << player2 << isOk(logique->joinGame(player2, player2, "llllll"));
-	//cout << "Rejoindre partie par " << player2 << isOk(logique->joinGame(player2, player2, player1));
+	//cout << "Rejoindre mauvaise partie par " << player2 <<
+isOk(logique->joinGame(player2, player2, "llllll"));
+	//cout << "Rejoindre partie par " << player2 <<
+isOk(logique->joinGame(player2, player2, player1));
 
 }*/
