@@ -21,11 +21,15 @@ function handle_message(msg) {
 			break
 		case "LOOSE":
 			break
-		case "ROOMS":
+		case "ROOM":
 			// TODO do that in batch
+			sessionStorage.setItem("id", res[1]);
 			let ul = document.getElementById("roomList");
-			let li = document.createElement("ul")
-			li.appendChild(document.createTextNode(res[1]));
+			let li = document.createElement("ul");
+			let a  = document.createElement("a");
+			a.setAttribute("href", "drawer");
+			a.appendChild(document.createTextNode("Player " + res[1] + "'s room"));
+			li.appendChild(a);
 			ul.appendChild(li);
 			break
 		default:
@@ -34,7 +38,8 @@ function handle_message(msg) {
 }
 
 socket.onmessage = (msg) => {
-	console.log(msg);
+	console.log("got res" + msg.data);
+	handle_message(msg.data);
 }
 
 socket.onopen = () =>  {

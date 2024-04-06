@@ -14,22 +14,19 @@ Server::Server(ip::address add, uint16_t p)
 Server::~Server() {}
 
 void Server::run_forever() {
-	for (;;) {
-		// This will receive the new connection
-		tcp::socket * socket = new tcp::socket{context};
+	// This will receive the new connection
+	tcp::socket * socket = new tcp::socket{context};
 
-		// Block until we get a connection
+	// Block until we get a connection
 
-		acceptor.async_accept(
-			*socket, boost::bind(&Server::on_accept, this, socket,
-								boost::asio::placeholders::error ));
+	acceptor.async_accept(
+		*socket, boost::bind(&Server::on_accept, this, socket,
+							boost::asio::placeholders::error ));
 
-		// TODO
-		// Launch the session, transferring ownership of the socket
-		// auto p = new Player() ; p.run();
-
-		context.poll();
-	}
+	// TODO
+	// Launch the session, transferring ownership of the socket
+	// auto p = new Player() ; p.run();
+	context.run();
 }
 
 void Server::on_accept(tcp::socket *socket, const boost::system::error_code &error) {
@@ -41,4 +38,5 @@ void Server::on_accept(tcp::socket *socket, const boost::system::error_code &err
 		//players.push_back(p);
 		//p->run();
 	}
+	run_forever();
 }

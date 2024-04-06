@@ -65,7 +65,7 @@ void Player::handle_input(std::vector<std::string> in) {
 		if (!is_in_game) {
 			game = make_shared<Game>(this);
 			is_in_game = true;
-			//send_room("TEST");
+			send_room();
 		}
 		break;
 	case LEAVE:
@@ -88,10 +88,8 @@ void Player::handle_input(std::vector<std::string> in) {
 	do_read();
 }
 
-void Player::send_room(std::string msg) {
-	ws.text(ws.got_text());
-	ws.async_write(boost::asio::buffer(std::format("MSSG:{}", msg)),
-	    beast::bind_front_handler(&Player::on_write, shared_from_this()));
+void Player::send_room() {
+	do_write(std::format("ROOM:{}", id));
 }
 
 void Player::send_pixel(pixel_t x, pixel_t y) {
@@ -99,7 +97,7 @@ void Player::send_pixel(pixel_t x, pixel_t y) {
 }
 
 void Player::send_message(std::string msg) {
-	do_write(std::format("MSG:{}", msg));
+	do_write(std::format("MSSG:{}", msg));
 }
 
 // SERVER STUFF
@@ -110,9 +108,6 @@ void Player::on_write(beast::error_code ec, std::size_t bytes_transferred) {
 	if (ec) {
 		std::cerr << "write: " << ec.message() << "\n";
 	}
-
-	// Clear the buffer
-	buffer.consume(buffer.size());
 }
 
 void Player::on_read(beast::error_code ec, std::size_t bytes_transferred) {
@@ -176,10 +171,15 @@ void Player::on_accept(beast::error_code) {
 void Player::do_read() {
 	ws.async_read(buffer, beast::bind_front_handler(&Player::on_read,
 													shared_from_this()));
+	// clear the buffer
+	buffer.clear();
 }
 
 void Player::do_write(const std::string msg) {
 	ws.async_write(
 		boost::asio::buffer(msg),
 		beast::bind_front_handler(&Player::on_write, shared_from_this()));
+
+	// clear the buffer
+	buffer.clear();
 }

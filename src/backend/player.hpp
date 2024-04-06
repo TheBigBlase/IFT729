@@ -24,7 +24,7 @@ class Player : public std::enable_shared_from_this<Player> {
 	bool is_in_game;
 	void send_message(std::string);
 	void send_pixel(pixel_t, pixel_t);
-	void send_room(std::string);
+	void send_room();
 
 	void run();
 
