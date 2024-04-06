@@ -65,7 +65,7 @@ void Player::handle_input(std::vector<std::string> in) {
 		if (!is_in_game) {
 			game = make_shared<Game>(this);
 			is_in_game = true;
-			send_room();
+			//send_room("TEST");
 		}
 		break;
 	case LEAVE:
@@ -88,7 +88,7 @@ void Player::handle_input(std::vector<std::string> in) {
 	do_read();
 }
 
-void Player::send_room() {
+void Player::send_room(std::string msg) {
 	ws.text(ws.got_text());
 	ws.async_write(boost::asio::buffer(std::format("MSSG:{}", msg)),
 	    beast::bind_front_handler(&Player::on_write, shared_from_this()));

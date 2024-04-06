@@ -1,4 +1,4 @@
-#include "logique.hpp"
+/*#include "logique.hpp"
 
 int Logique::createGame(string playerName, string playerSocket) {
 	if (games.find(playerName) != games.end()) {
@@ -16,3 +16,4 @@ int Logique::joinGame(string playerName, string playerSocket, string gameId) {
 	}
 	return it->second->addPlayer(playerName, playerSocket);
 }
+*/

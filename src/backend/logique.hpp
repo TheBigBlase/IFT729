@@ -28,4 +28,4 @@ class Logique {
 	int joinGame(string playerName, string playerSocket, string gameId);
 };
 
-#endif*
+#endif*/
