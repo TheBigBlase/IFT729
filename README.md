@@ -2,22 +2,20 @@
 Student project for IFT729 (aka real time systems)
 
 # front end
-front end is in `src/front-end`. Run `npm install socket.io express` to install
-libs.
+front end is in `src/front-end`. Run `npm install express` to install required modules.
 run with `node ./server.js` in `src/front-end` to run front end.
-Check `localhost:3000/drawer` or `localhost:3000/guesser` to load relevent
-pages.
+Check `localhost:3000/` to load relevent pages.
 
 # backend
-since for now front end will rely on websocket, ZMQ seems reasonable to use. 
-It would be easy to understand and prototype. 
-On the otherside, boost::asio would be very powerful.
+since for now front end will rely on websocket, with a fully async, signle threaded (for now) management.
+It uses boost.
 
-Its buildable w/ cmake, go where you wanna build (eg, `src/backend/build`) and 
-run `cmake <../> -DCMAKE_BUILD_TYPE={Debug,Release}` where `../` points to the
-dir where `CMakeLists.txt` is.
+We used cmake to build this project. To build it, go where where `CMakeLists.txt` is (ie, `src/backend`)
+and run `cmake ./ -Bbuild`.
+To run it, go to the build dir and run the executable `guessMyDraw` (if build on release mode).
+Then, interact with it through the front end.
 
-After that, we might try to implement faster protocol, (we _have_ to do
+After that, we __might__ (update: we dont have time) try to implement faster protocol, (we _have_ to do
 real time after all)
 
 choices we have (for frontend):
