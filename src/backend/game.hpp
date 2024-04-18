@@ -46,7 +46,7 @@ class GameIndexer {
 	private:
 		GameIndexer() : games{}{};
 		// TODO clean games when everyone leaves the lobby
-		std::vector<std::pair<std::weak_ptr<Game>, value_t>> games;
+		std::vector<std::pair<std::shared_ptr<Game>, value_t>> games;
 
 	  public:
 		GameIndexer(GameIndexer const &) = delete;
@@ -56,27 +56,27 @@ class GameIndexer {
 
 		std::weak_ptr<Game> search_game(value_t id) {
 			auto tmp = std::end(games) - 1;
+			auto res = std::weak_ptr<Game>{};
 			for (; tmp != std::begin(games) - 1; --tmp) {
 				if (tmp.base()->second == id) {
-					return tmp.base()->first;
+					res = tmp.base()->first;
 				}
 			}
-			// return null
-			return std::weak_ptr<Game>{};
+			return res;
 		}
 
 		void add_game(std::shared_ptr<Game> g) {
-			games.push_back({weak_ptr(g), g->getId()});
+			games.push_back({g, g->getId()});
 		}
 
-		std::vector<std::shared_ptr<Game>> *get_last_10() {
-			std::vector<std::shared_ptr<Game>> *res =
-				new std::vector<std::shared_ptr<Game>>();
+		std::vector<std::weak_ptr<Game>> *get_last_10() {
+			std::vector<std::weak_ptr<Game>> *res =
+				new std::vector<std::weak_ptr<Game>>();
 			res->reserve(10);
 
 			auto tmp = std::end(games) - std::min<value_t>(games.size(), 10);
 			for (; tmp != std::end(games); ++tmp) {
-				res->push_back(tmp->first.lock());
+				res->push_back(tmp->first);
 			}
 			return res;
 		}

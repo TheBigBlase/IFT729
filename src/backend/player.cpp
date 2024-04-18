@@ -65,20 +65,26 @@ void Player::handle_input(std::vector<std::string> in) {
 		// client has sent a message / submitted a guess
 		break;
 	case JOIN:
-		std::cout << "[JOIN] player " << id << " joined game" << std::endl;
 		if (game == nullptr) {
 			game = indexer->search_game(std::atoi(in[1].c_str())).lock();
 		}
-		game->addPlayer(this);
-		is_in_game = true;
+
+		if (game != nullptr) {
+			game->addPlayer(this);
+			is_in_game = true;
+			std::cout << "[JOIN] player " << id << " joined game" << game->getId() << std::endl;
+		} else {
+			do_write("ERR");
+		}
 		break;
 	// TODO rename to game
 	case NEWROOM:
 		if (!is_in_game) {
-			game = make_shared<Game>(this, num_games++);
+			game = make_unique<Game>(this, num_games++);
 			indexer->add_game(game);
 			is_in_game = true;
-			send_room();
+			send_drawer();
+			std::cout << "[DRAWER] " << game->getId() << std::endl;
 		}
 		break;
 	case LEAVE:
@@ -116,7 +122,7 @@ void Player::send_room() {
 	auto rooms_str = std::string{};
 
 	for(auto room : *rooms) {
-		rooms_str.append(std::format(":{}", room->getId()));
+		rooms_str.append(std::format(":{}", room.lock()->getId()));
 	}
 
 	// if empty, wtf, send error
@@ -128,6 +134,10 @@ void Player::send_room() {
 
 	else
 		do_write("ERR");
+}
+
+void Player::send_drawer() {
+	do_write(std::format("DRAWER:{}", game->getId()));
 }
 
 void Player::send_pixel(pixel_t x, pixel_t y) {
