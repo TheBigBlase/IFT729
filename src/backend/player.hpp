@@ -5,6 +5,7 @@
 #include <boost/beast/websocket.hpp>
 
 #include "value_types.hpp"
+//#include "gameIndexer.hpp"
 #include <string>
 #include <vector>
 
@@ -14,6 +15,7 @@ namespace http = beast::http;
 
 using tcp = boost::asio::ip::tcp;
 class Game;
+class GameIndexer;
 
 class Player : public std::enable_shared_from_this<Player> {
   public:
@@ -32,7 +34,9 @@ class Player : public std::enable_shared_from_this<Player> {
 	value_t id;
 	websocket::stream<tcp::socket> ws;
 	beast::flat_buffer buffer;
+
 	std::shared_ptr<Game> game;
+	GameIndexer *indexer;
 
 	std::vector<std::string> sanitize_input(std::string);
 	void handle_input(std::vector<std::string>);
@@ -46,6 +50,7 @@ class Player : public std::enable_shared_from_this<Player> {
 	void do_write(std::string);
 	inline static std::string delimiter = ":";
 	inline static value_t max_elts = 3;
+	inline static value_t num_games = 0;
 };
 
 #endif
