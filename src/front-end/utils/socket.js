@@ -1,47 +1,71 @@
 // cors ? 
+
+
 const address = 'ws://localhost:8888';
 let socket = new WebSocket(address);
-
 // leaving this as example of how to get response
 // TODO get events
 //     win / lose
-//     new page
 //     new guesses
 //     other's guesses
 
 // TODO
-function handle_message(msg) {
+
+function go_to_draw(id) {
+	sessionStorage.setItem("game_id", id);
+}
+
+function handle_message(msg, id = 0) {
 	let res = msg.split(":");
 	switch (res[0]) {
 		case "PX":
-			break
+			console.log("PIXEL x: " + res[1] + " y: "+ res[2]);
+			break;
 		case "MSSG":
-			break
+			break;
 		case "WIN":
-			break
+			break;
 		case "LOOSE":
-			break
+			break;
+		case "ERR":
+			break;
 		case "ROOM":
 			// TODO do that in batch
 			sessionStorage.setItem("id", res[1]);
+			res = res.slice(1, undefined);
+
 			let ul = document.getElementById("roomList");
-			let li = document.createElement("ul");
-			let a  = document.createElement("a");
-			a.setAttribute("href", "drawer");
-			a.appendChild(document.createTextNode("Player " + res[1] + "'s room"));
-			li.appendChild(a);
-			ul.appendChild(li);
-			break
+			while (ul.firstChild) {
+				myNode.removeChild(ul.lastChild);
+			}
+			for (let elt of res) {
+				ul = document.getElementById("roomList");
+				let li = document.createElement("li");
+				let a = document.createElement("a");
+				a.setAttribute("href", "drawer");
+				a.setAttribute("onClick", "go_to_draw(" + elt + ")");
+				a.appendChild(document.createTextNode("Player " + elt + "'s room"));
+				li.appendChild(a);
+				ul.appendChild(li);
+			};
+			break;
+		case "CONN":
+			let id = sessionStorage.getItem("player_id");
+			if (id != undefined) {
+				socket.send("RECONN:" + id + ":\0");
+			}
+			break;
 		default:
 			break;
 	}
 }
+
 
 socket.onmessage = (msg) => {
 	console.log("got res" + msg.data);
 	handle_message(msg.data);
 }
 
-socket.onopen = () =>  {
-	console.log("Socket connected")
+
+socket.onclose = () => {
 }
