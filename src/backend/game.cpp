@@ -2,7 +2,8 @@
 #include <iostream>
 #include <string>
 
-Game::Game(Player *p) : creator{p}, drawer{p}, state{WAITING_FOR_WORD} {
+Game::Game(Player *p, value_t id)
+	: creator{p}, drawer{p}, state{WAITING_FOR_WORD}, id{id}, players{} {
 	players.push_back(p);
 	wordToGuess = "";
 	name = std::format("{}'s room", p->name);
@@ -11,13 +12,14 @@ Game::Game(Player *p) : creator{p}, drawer{p}, state{WAITING_FOR_WORD} {
 // TODO should be bool
 int Game::addPlayer(Player *p) {
 	if (std::find(std::begin(players), std::end(players), p) == players.end()) {
+		players.push_back(p);
 		return 1;
 	}
 
-	players.push_back(p);
 	return 0;
 }
 
+// TODO should be bool
 int Game::setWord(Player &p, string word) {
 	if (&p != drawer) {
 		return 1;
@@ -30,6 +32,7 @@ int Game::setWord(Player &p, string word) {
 	return 0;
 }
 
+// TODO should be bool
 int Game::guess(Player &p, string guessedWord) {
 	if (guessedWord == wordToGuess) {
 		return gameOver(p);
@@ -40,6 +43,7 @@ int Game::guess(Player &p, string guessedWord) {
 	return 0;
 }
 
+// TODO should be bool
 int Game::gameOver(Player &p) {
 
 	// TODO envoyer la bonne nouvelle
@@ -51,6 +55,7 @@ int Game::gameOver(Player &p) {
 	return 0;
 }
 
+// TODO should be bool
 int Game::sendWordToAll(string code, Player &player, string word) {
 	// Code qui va servir a envoyer les mots a tous
 	// TODO what's a code
@@ -62,33 +67,17 @@ int Game::sendWordToAll(string code, Player &player, string word) {
 	return 0;
 }
 
-std::string Game::getName() { return name; }
+// TODO should be bool
+// TODO dont ret 0 if we got nothing to return in the first place
+int Game::broadcastPixel(value_t x, value_t y, Player &author) {
+	for (auto p : players) {
+		if (p != nullptr && p != &author)
+			p->send_pixel(x, y);
+	}
 
-/*#include<iostream>
-#include"logique.hpp"
-using namespace std;
-
-string isOk(int val) {
-	return !val ? " : OK" : " : ERROR";
+	return 0;
 }
 
-int main(int argc, char* argv[])
-{
-	cout << "yooo" << endl;
-	Logique* logique
-		= Logique::get();
-	string player1 = "Bob";
-	string player2 = "Alice";
-	string socket1 = "Whatever";
-	string socket2 = "WhoCares";
+std::string Game::getName() { return name; }
 
-
-	//cout << "Creation de partie par " << player1 <<
-isOk(logique->createGame(player1, socket1));
-
-	//cout << "Rejoindre mauvaise partie par " << player2 <<
-isOk(logique->joinGame(player2, player2, "llllll"));
-	//cout << "Rejoindre partie par " << player2 <<
-isOk(logique->joinGame(player2, player2, player1));
-
-}*/
+value_t Game::getId() { return id; }
