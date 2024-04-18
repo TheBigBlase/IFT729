@@ -1,4 +1,13 @@
 document.addEventListener("DOMContentLoaded", function() {
+
+	const id = sessionStorage.getItem("game_id");
+
+	socket.onopen = () => {
+		socket.send(`JOIN:${id}:\0`);
+		console.log("Socket connected")
+	}
+	console.log("send join to " + id);
+
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -27,8 +36,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function draw(event) {
         const rect = canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        const x = Math.round(event.clientX - rect.left);
+        const y = Math.round(event.clientY - rect.top);
 
          // Couleur bleue
         const newColor = [0, 0, 255, 255];
@@ -47,6 +56,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         console.log(`Coordonnées du pixel cliqué : (${x}, ${y})`);
-		socket.send(`PX:${x}:${y}`);
+		socket.send(`PX:${x}:${y}:\0`);
     }
 });
