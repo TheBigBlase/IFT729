@@ -41,6 +41,7 @@ int Game::setWord(Player &p, string word) {
 
 // TODO should be bool
 int Game::guess(Player &p, string guessedWord) {
+	std::cout << "[GUESS] " << guessedWord << " " << wordToGuess << std::endl;
 	if (guessedWord == wordToGuess) {
 		return gameOver(p);
 	}
@@ -54,14 +55,14 @@ int Game::guess(Player &p, string guessedWord) {
 int Game::gameOver(Player &p) {
 	std::cout << "winner : " << p.name << endl;
 	p.send_win(wordToGuess);
-	changeDrawer(p);
 	sendLoseToAll(p, wordToGuess);
+	changeDrawer(p);
 	// NOTE need ret value?
 	return 0;
 }
 
 void Game::changeDrawer(Player &p){
-	drawer->send_guesser();
+	//drawer->send_guesser();
 	wordToGuess = Word_list::get().get_random_word_different_from(wordToGuess);
 	drawer = &p;
 }
@@ -85,7 +86,7 @@ int Game::sendLoseToAll(Player& player, string word) {
 	for_each(std::begin(players), std::end(players),
 		[&word, &player](Player* p) {
 			if (p != &player) //en comment pour lisntant, a voir quest ce quon  fait avec ca
-				p->send_lose(p->name,word);
+				p->send_lose(p->name, word);
 		});
 	return 0;
 }

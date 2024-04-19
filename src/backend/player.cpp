@@ -156,7 +156,7 @@ void Player::send_win(std::string msg) {
 	do_write(std::format("WIN:{}", msg));
 }
 void Player::send_lose(std::string winner, std::string msg) {
-	do_write(std::format("LOOSE:{}:{}",winner, msg));
+	do_write(std::format("LOOSE:{}:{}", winner, msg));
 }
 
 // SERVER STUFF
