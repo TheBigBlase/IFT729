@@ -58,8 +58,8 @@ class GameIndexer {
 			auto tmp = std::end(games) - 1;
 			auto res = std::weak_ptr<Game>{};
 			for (; tmp != std::begin(games) - 1; --tmp) {
-				if (tmp.base()->second == id) {
-					res = tmp.base()->first;
+				if (tmp->second == id) {
+					res = tmp->first;
 				}
 			}
 			return res;
