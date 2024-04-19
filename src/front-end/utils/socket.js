@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.location.href = "/drawer";
 				break;
 			case "LOOSE":
-                window.alert("Someone found the right word !\n\
+                window.alert(res[1]+" found the right word : " + res[2] +"!\n\
                 You didn't win this one.\n\n\
                 New game starting !\n\n");
 				window.location.href = "/guesser"; //temporaire pour quand on va savoir qui est le drawer
