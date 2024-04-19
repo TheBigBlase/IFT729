@@ -3,6 +3,6 @@
 #include <cstdint>
 
 using value_t = int;
-using pixel_t = uint8_t;
+using pixel_t = uint16_t;
 
 #endif
