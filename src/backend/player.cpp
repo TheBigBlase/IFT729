@@ -91,7 +91,7 @@ void Player::handle_input(std::vector<std::string> in) {
 			game = make_unique<Game>(this, num_games++);
 			indexer->add_game(game);
 			is_in_game = true;
-			send_drawer();
+			send_drawer(game->getWordToGuess());
 			std::cout << "[DRAWER] " << game->getId() << std::endl;
 		}
 		break;
@@ -136,8 +136,8 @@ void Player::send_room() {
 		do_write("ERR");
 }
 
-void Player::send_drawer() {
-	do_write(std::format("DRAWER:{}", game->getId()));
+void Player::send_drawer(std::string word) {
+	do_write(std::format("DRAWER:{}:{}", game->getId(), word));
 }
 
 void Player::send_guesser() {
@@ -220,7 +220,7 @@ void Player::do_read() {
 
 void Player::do_write(const std::string msg) {
 	ws.async_write(
-		boost::asio::buffer(msg.data(), msg.size()),
+		boost::asio::buffer(msg),
 		beast::bind_front_handler(&Player::on_write, shared_from_this()));
 
 	// clear the buffer

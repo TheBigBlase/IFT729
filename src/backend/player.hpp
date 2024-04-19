@@ -27,7 +27,7 @@ class Player : public std::enable_shared_from_this<Player> {
 	void send_message(std::string);
 	void send_pixel(pixel_t, pixel_t);
 	void send_room();
-	void send_drawer();
+	void send_drawer(std::string word);
 	void send_guesser();
 	void send_win(std::string);
 	void send_lose(std::string,std::string);
