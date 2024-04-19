@@ -61,7 +61,8 @@ void Player::handle_input(std::vector<std::string> in) {
 		game->broadcastPixel(std::atoi(in[1].c_str()),
 							 std::atoi(in[2].c_str()), *this);
 		break;
-	case MSSG:
+	case MSG:
+		game->guess(*this, in[1]);
 		// client has sent a message / submitted a guess
 		break;
 	case JOIN:
@@ -140,12 +141,16 @@ void Player::send_drawer() {
 	do_write(std::format("DRAWER:{}", game->getId()));
 }
 
+void Player::send_guesser() {
+	do_write(std::format("GUESSER:{}", game->getId()));
+}
+
 void Player::send_pixel(pixel_t x, pixel_t y) {
 	do_write(std::format("PX:{}:{}", x, y));
 }
 
 void Player::send_message(std::string msg) {
-	do_write(std::format("MSSG:{}", msg));
+	do_write(std::format("MSG:{}", msg));
 }
 
 // SERVER STUFF
@@ -154,7 +159,7 @@ void Player::on_write(beast::error_code ec, std::size_t bytes_transferred) {
 	boost::ignore_unused(bytes_transferred);
 
 	if (ec) {
-		std::cerr << "write: " << ec.message() << "\n";
+		std::cerr << "[ERROR] write: " << ec.message() << "\n";
 	}
 }
 
@@ -165,7 +170,7 @@ void Player::on_read(beast::error_code ec, std::size_t bytes_transferred) {
 		return;
 
 	if (ec) {
-		std::cerr << "read: " << ec.message() << "\n";
+		std::cerr << "[ERROR] read: " << ec.message() << "\n";
 		return;
 	}
 
@@ -185,25 +190,16 @@ void Player::run() {
 
 void Player::on_run() {
 	std::cout << "[ONRUN]" << std::endl;
-	try {
-		ws.async_accept(
-			beast::bind_front_handler(&Player::on_accept, shared_from_this()));
-
-		// This buffer will hold the incoming message
-	} // TODO remove excepts
-	catch (beast::system_error const &se) {
-		// This indicates that the session was closed
-		if (se.code() != websocket::error::closed)
-			std::cerr << "Error: " << se.code().location()
-					  << se.code().message() << std::endl;
-		delete this;
-	} catch (std::exception const &e) {
-		std::cerr << "Error: " << e.what() << std::endl;
-		delete this;
-	}
+	ws.async_accept(
+		beast::bind_front_handler(&Player::on_accept, shared_from_this()));
 }
 
-void Player::on_accept(beast::error_code) {
+void Player::on_accept(beast::error_code ec) {
+	if (ec) {
+		std::cerr << "[ERROR] accept: " << ec.message() << "\n";
+		return;
+	}
+
 	std::cout << "[ACCEPT] new socket accepted" << std::endl;
 	do_write(std::format("CONN:{}", id)); // send id
 	do_read();
@@ -218,7 +214,7 @@ void Player::do_read() {
 
 void Player::do_write(const std::string msg) {
 	ws.async_write(
-		boost::asio::buffer(msg),
+		boost::asio::buffer(msg.data(), msg.size()),
 		beast::bind_front_handler(&Player::on_write, shared_from_this()));
 
 	// clear the buffer
