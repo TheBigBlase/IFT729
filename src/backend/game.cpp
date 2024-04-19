@@ -3,8 +3,8 @@
 #include <string>
 
 Game::Game(Player *p, value_t id)
-	players.push_back(p);
 	: creator{p}, drawer{p}, id{id}, players{} {
+	players.push_back(p);
 	wordToGuess = "pomme";
 	name = std::format("{}'s room", p->name);
 }
@@ -13,8 +13,6 @@ void Game::addPlayer(Player *p) {
 	if (std::find(std::begin(players), std::end(players), p) == players.end()) {
 		players.push_back(p);
 	}
-}
-
 }
 
 void Game::removePlayer(Player* p) {
