@@ -22,3 +22,5 @@ add_executable(guessMyDraw ${src})
 set_target_properties(guessMyDraw PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 target_link_libraries(guessMyDraw LINK_PUBLIC ${Boost_LIBRARIES})
 target_compile_features(guessMyDraw PRIVATE cxx_std_23)
+
+configure_file("word_list.txt" "word_list.txt" COPYONLY)

@@ -24,7 +24,7 @@ class Game {
 	// Gestion de la partie
 	State state;
 	std::string name;
-	string wordToGuess;
+	std::string wordToGuess;
 	vector<pair<string, Player &>>
 		guessList; // <guess, nomDuJoueur> on peut preallouer pour accelerer
 				   // surment
@@ -33,14 +33,16 @@ class Game {
 	// TODO use smart pointer, probably
 	Game(Player *creator, value_t);
 	int guess(Player &, string guessedWord);
-	int sendWordToAll(string code, Player &player, string word);
-	int sendLoseToAll(string code, Player &player, string word);
+	int sendWordToAll(Player &player, string word);
+	int sendLoseToAll(Player &player, string word);
 	int broadcastPixel(value_t, value_t, Player &);
 	int addPlayer(Player *player);
 	int removePlayer(Player *player);
 	int setWord(Player &player, string word);
-	int gameOver(Player &); // player ?
+	int gameOver(Player &);
+	void changeDrawer(Player &);
 	std::string getName();
+	std::string getWordToGuess();
 	value_t getId();
 };
 
