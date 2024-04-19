@@ -98,14 +98,6 @@ void Player::handle_input(std::vector<std::string> in) {
 	case LEAVE:
 		// client has left the room
 		break;
-	case WIN:
-		// client has drawn a new px
-		// TODO should this be here ?
-		break;
-	case LOOSE:
-		// client has drawn a new px
-		// TODO should this be here ?
-		break;
 	case RECONN:
 		// send connection id
 		id = static_cast<value_t>(std::atoi(in[1].c_str()));
@@ -158,6 +150,13 @@ void Player::send_pixel(pixel_t x, pixel_t y) {
 
 void Player::send_message(std::string msg) {
 	do_write(std::format("MSG:{}", msg));
+}
+
+void Player::send_win(std::string msg) {
+	do_write(std::format("WIN:{}", msg));
+}
+void Player::send_lose(std::string winner, std::string msg) {
+	do_write(std::format("LOOSE:{}:{}",winner, msg));
 }
 
 // SERVER STUFF

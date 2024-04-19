@@ -5,7 +5,7 @@
 Game::Game(Player *p, value_t id)
 	: creator{p}, drawer{p}, state{WAITING_FOR_WORD}, id{id}, players{} {
 	players.push_back(p);
-	wordToGuess = "";
+	wordToGuess = "pomme";
 	name = std::format("{}'s room", p->name);
 }
 
@@ -50,12 +50,9 @@ int Game::guess(Player &p, string guessedWord) {
 
 // TODO should be bool
 int Game::gameOver(Player &p) {
-
-	// TODO envoyer la bonne nouvelle
 	std::cout << "winner : " << p.name << endl;
-	drawer = &p;
-	wordToGuess = "";
-	state = WAITING_FOR_WORD;
+	p.send_win(wordToGuess);
+	sendLoseToAll("",p, wordToGuess);
 	// NOTE need ret value?
 	return 0;
 }
@@ -66,9 +63,21 @@ int Game::sendWordToAll(string code, Player &player, string word) {
 	// TODO what's a code
 	for_each(std::begin(players), std::end(players),
 			 [&word, &player](Player *p) {
-				 if (p != &player)
-					 p->send_message(word);
+				 if (p != &player) //en comment pour lisntant, a voir quest ce quon  fait avec ca
+					p->send_message(word);
 			 });
+	return 0;
+}
+
+// TODO should be bool
+int Game::sendLoseToAll(string code, Player& player, string word) {
+	// Code qui va servir a envoyer les mots a tous
+	// TODO what's a code
+	for_each(std::begin(players), std::end(players),
+		[&word, &player](Player* p) {
+			if (p != &player) //en comment pour lisntant, a voir quest ce quon  fait avec ca
+				p->send_lose(p->name,word);
+		});
 	return 0;
 }
 

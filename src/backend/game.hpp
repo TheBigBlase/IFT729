@@ -34,6 +34,7 @@ class Game {
 	Game(Player *creator, value_t);
 	int guess(Player &, string guessedWord);
 	int sendWordToAll(string code, Player &player, string word);
+	int sendLoseToAll(string code, Player &player, string word);
 	int broadcastPixel(value_t, value_t, Player &);
 	int addPlayer(Player *player);
 	int removePlayer(Player *player);
