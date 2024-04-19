@@ -1,4 +1,4 @@
-const address = 'ws://localhostt:8888';
+const address = 'ws://localhost:8888';
 let socket = new WebSocket(address);
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -29,8 +29,9 @@ document.addEventListener("DOMContentLoaded", function () {
 				// TODO print on guesser side
 				let x = res[1], y = res[2];
 				// TODO separate files maybe?
+                
 				if (window.location.href.endsWith("guesser")) {
-					ctx.fillRect(x, y, 10, 10);
+                    ctx.fillRect(x-3, y-3, 7, 7);
 					console.log("PIXEL x: " + x + " y: " + y);
 				}
 				break;
@@ -43,11 +44,18 @@ document.addEventListener("DOMContentLoaded", function () {
 				break;
 			}
 			case "WIN":
-				// TODO
+                window.alert("You found the right word !\n\
+                Congrats, you won this one !\n\n\
+                New game starting !\n\n");
+                window.location.href = "localhost:3000/guesser";
 				break;
 			case "LOOSE":
-				// TODO
-				break;
+                window.alert("Someone found the right word !\n\
+                You didn't win this one.\n\n\
+                New game starting !\n\n");
+                var canvas = document.getElementById('canvas');
+                var context = canvas.getContext('2d');
+                context.clearRect(0, 0, canvas.width, canvas.height);
 			case "ERR":
 				break;
 			case "ROOM": {
