@@ -13,8 +13,8 @@ constexpr value_t string_to_int(const char *s) { return string_to_int(s, 0); }
 
 enum messages {
 	PX		= string_to_int(static_cast<const char *>("PX")),
-	WIN		= string_to_int(static_cast<const char *>("WIN")),  // that change
-	MSSG	= string_to_int(static_cast<const char *>("MSSG")), // uh? why did
+	WIN		= string_to_int(static_cast<const char *>("WIN")),
+	MSG		= string_to_int(static_cast<const char *>("MSG")),
 	JOIN	= string_to_int(static_cast<const char *>("JOIN")),
 	LEAVE	= string_to_int(static_cast<const char *>("LEAVE")),
 	LOOSE	= string_to_int(static_cast<const char *>("LOOSE")),

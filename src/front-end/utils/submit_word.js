@@ -3,5 +3,6 @@ document.addEventListener("DOMContentLoaded", function() {
     submitButton.addEventListener('click', function() {
         var guessInput = document.getElementById('guessInput').value;
         console.log("La réponse soumise est :", guessInput);
+		socket.send(`MSG:${guessInput}:\0`);
     });
 });

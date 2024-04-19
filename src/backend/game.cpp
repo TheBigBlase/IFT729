@@ -32,31 +32,32 @@ int Game::setWord(Player &p, string word) {
 	return 0;
 }
 
-// TODO should be bool
 int Game::guess(Player &p, string guessedWord) {
 	if (guessedWord == wordToGuess) {
 		return gameOver(p);
 	}
 	// TODO envoyer que t'es poche
 	guessList.push_back(pair<string, Player &>(guessedWord, p));
-	sendWordToAll("", p, guessedWord);
+	broadcastMessage(p, guessedWord);
 	return 0;
 }
 
-// TODO should be bool
+// TODO should be void
 int Game::gameOver(Player &p) {
 
 	// TODO envoyer la bonne nouvelle
-	std::cout << "winner : " << p.name << endl;
+	std::cout << "[GAME] winner: " << p.name << endl;
+	drawer->send_guesser();
 	drawer = &p;
+	p.send_drawer();
 	wordToGuess = "";
 	state = WAITING_FOR_WORD;
 	// NOTE need ret value?
 	return 0;
 }
 
-// TODO should be bool
-int Game::sendWordToAll(string code, Player &player, string word) {
+// TODO should be void
+int Game::broadcastMessage(Player &player, string word) {
 	// Code qui va servir a envoyer les mots a tous
 	// TODO what's a code
 	for_each(std::begin(players), std::end(players),
@@ -67,7 +68,7 @@ int Game::sendWordToAll(string code, Player &player, string word) {
 	return 0;
 }
 
-// TODO should be bool
+// TODO should be void
 // TODO dont ret 0 if we got nothing to return in the first place
 int Game::broadcastPixel(value_t x, value_t y, Player &author) {
 	for (auto p : players) {
@@ -77,6 +78,9 @@ int Game::broadcastPixel(value_t x, value_t y, Player &author) {
 
 	return 0;
 }
+
+// TODO should be void
+
 
 std::string Game::getName() { return name; }
 

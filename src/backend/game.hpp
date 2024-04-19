@@ -33,7 +33,7 @@ class Game {
 	// TODO use smart pointer, probably
 	Game(Player *creator, value_t);
 	int guess(Player &, string guessedWord);
-	int sendWordToAll(string code, Player &player, string word);
+	int broadcastMessage(Player &player, string word);
 	int broadcastPixel(value_t, value_t, Player &);
 	int addPlayer(Player *player);
 	int setWord(Player &player, string word);

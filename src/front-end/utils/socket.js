@@ -1,6 +1,6 @@
-
-const address = 'ws://localhost:8888';
+const address = 'ws://localhostt:8888';
 let socket = new WebSocket(address);
+
 document.addEventListener("DOMContentLoaded", function () {
 	// leaving this as example of how to get response
 	// TODO get events
@@ -35,9 +35,13 @@ document.addEventListener("DOMContentLoaded", function () {
 				}
 				break;
 			}
-			case "MSSG":
-				// TODO
+			case "MSG": {
+				ul = document.getElementById("messageList");
+				let li = document.createElement("li");
+				li.appendChild(document.createTextNode(res[1]));
+				ul.appendChild(li);
 				break;
+			}
 			case "WIN":
 				// TODO
 				break;
@@ -58,8 +62,8 @@ document.addEventListener("DOMContentLoaded", function () {
 					ul = document.getElementById("roomList");
 					let li = document.createElement("li");
 					let a = document.createElement("a");
+					store_game_id(elt);
 					a.setAttribute("href", "guesser");
-					a.setAttribute("onClick", "store_game_id(" + elt + ")");
 					a.appendChild(document.createTextNode("Room n°" + elt));
 					li.appendChild(a);
 					ul.appendChild(li);
@@ -75,8 +79,8 @@ document.addEventListener("DOMContentLoaded", function () {
 				let li = document.createElement("li");
 				let a = document.createElement("a");
 				let ul = document.getElementById("roomList");
+				store_game_id(room);
 				a.setAttribute("href", "drawer");
-				a.setAttribute("onClick", "store_game_id(" + room + ")");
 				a.appendChild(document.createTextNode("Go to your lobby!"));
 				li.appendChild(a);
 				ul.appendChild(li);
