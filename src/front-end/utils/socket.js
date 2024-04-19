@@ -1,16 +1,26 @@
 const address = 'ws://localhost:8888';
 let socket = new WebSocket(address);
-// leaving this as example of how to get response
-// TODO get events
-//     win / lose
-//     new guesses
-//     other's guesses
 
-// TODO
+document.addEventListener("DOMContentLoaded", function () {
+	// leaving this as example of how to get response
+	// TODO get events
+	//     win / lose
+	//     new guesses
+	//     other's guesses
 
-function go_to_draw(id) {
-	sessionStorage.setItem("game_id", id);
-}
+	let canvas, ctx, canvasData, width, height;
+
+	if (window.location.href.endsWith("guesser")) {
+		canvas = document.getElementById('canvas');
+		ctx = canvas.getContext('2d');
+		width = canvas.getBoundingClientRect().width;
+		height = canvas.getBoundingClientRect().height;
+		canvasData = ctx.getImageData(0, 0, width, height);
+	}
+
+	function store_game_id(id) {
+		sessionStorage.setItem("game_id", id);
+	}
 
 	function handle_message(msg, id = 0) {
 		let res = msg.split(":");
@@ -37,15 +47,16 @@ function go_to_draw(id) {
                 window.alert("You found the right word !\n\
                 Congrats, you won this one !\n\n\
                 New game starting !\n\n");
-                window.location.href = "localhost:3000/guesser";
+                window.location.href = "/drawer";
 				break;
 			case "LOOSE":
                 window.alert("Someone found the right word !\n\
                 You didn't win this one.\n\n\
                 New game starting !\n\n");
-                var canvas = document.getElementById('canvas');
-                var context = canvas.getContext('2d');
-                context.clearRect(0, 0, canvas.width, canvas.height);
+				window.location.href = "/guesser"; //temporaire pour quand on va savoir qui est le drawer
+                //var canvas = document.getElementById('canvas');
+                //var context = canvas.getContext('2d');
+                //context.clearRect(0, 0, canvas.width, canvas.height);
 			case "ERR":
 				break;
 			case "ROOM": {
@@ -76,30 +87,24 @@ function go_to_draw(id) {
 				let room = res[1];
 				let li = document.createElement("li");
 				let a = document.createElement("a");
+				let ul = document.getElementById("roomList");
+				store_game_id(room);
 				a.setAttribute("href", "drawer");
-				a.setAttribute("onClick", "go_to_draw(" + elt + ")");
-				a.appendChild(document.createTextNode("Player " + elt + "'s room"));
+				a.appendChild(document.createTextNode("Go to your lobby!"));
 				li.appendChild(a);
 				ul.appendChild(li);
-			};
-			break;
-		case "CONN":
-			let id = sessionStorage.getItem("player_id");
-			if (id != undefined) {
-				socket.send("RECONN:" + id + ":\0");
+				break;
 			}
-			break;
-		default:
-			break;
+			default:
+				break;
+		}
 	}
-}
 
+	socket.onmessage = (msg) => {
+		console.log("got msg: " + msg.data);
+		handle_message(msg.data);
+	}
 
-socket.onmessage = (msg) => {
-	console.log("got res" + msg.data);
-	handle_message(msg.data);
-}
-
-
-socket.onclose = () => {
-}
+	socket.onclose = () => {
+	}
+});
