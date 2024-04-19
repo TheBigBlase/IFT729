@@ -32,14 +32,14 @@ class Game {
   public:
 	// TODO use smart pointer, probably
 	Game(Player *creator, value_t);
-	int guess(Player &, string guessedWord);
-	int sendWordToAll(Player &player, string word);
-	int sendLoseToAll(Player &player, string word);
-	int broadcastPixel(value_t, value_t, Player &);
-	int addPlayer(Player *player);
-	int removePlayer(Player *player);
-	int setWord(Player &player, string word);
-	int gameOver(Player &);
+	void guess(Player &, string guessedWord);
+	void sendWordToAll(Player &player, string word);
+	void sendLoseToAll(Player &player, string word);
+	void broadcastPixel(value_t, value_t, Player &);
+	void addPlayer(Player *player);
+	void removePlayer(Player *player);
+	void setWord(Player &player, string word);
+	void gameOver(Player &); // player ?
 	void changeDrawer(Player &);
 	std::string getName();
 	std::string getWordToGuess();

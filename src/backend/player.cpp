@@ -125,13 +125,13 @@ void Player::send_room() {
 		rooms_str.append(std::format(":{}", room.lock()->getId()));
 	}
 
-	// if empty, wtf, send error
 	if (!rooms->empty()) {
 		// first colon already included
 		std::string res = std::format("ROOM{}", rooms_str);
 		do_write(res);
 	}
 
+	// if empty, wtf, send error
 	else
 		do_write("ERR");
 }
