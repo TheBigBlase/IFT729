@@ -36,6 +36,7 @@ class Game {
 	int sendWordToAll(string code, Player &player, string word);
 	int broadcastPixel(value_t, value_t, Player &);
 	int addPlayer(Player *player);
+	int removePlayer(Player *player);
 	int setWord(Player &player, string word);
 	int gameOver(Player &); // player ?
 	std::string getName();
@@ -55,9 +56,9 @@ class GameIndexer {
 		static GameIndexer &get() { static GameIndexer indexer; return indexer;}
 
 		std::weak_ptr<Game> search_game(value_t id) {
-			auto tmp = std::end(games) - 1;
+			auto tmp = std::rbegin(games);
 			auto res = std::weak_ptr<Game>{};
-			for (; tmp != std::begin(games) - 1; --tmp) {
+			for (; tmp != std::rend(games); ++tmp) {
 				if (tmp->second == id) {
 					res = tmp->first;
 				}

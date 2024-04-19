@@ -28,6 +28,7 @@ class Player : public std::enable_shared_from_this<Player> {
 	void send_pixel(pixel_t, pixel_t);
 	void send_room();
 	void send_drawer();
+	void send_guesser();
 
 	void run();
 

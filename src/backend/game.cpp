@@ -19,6 +19,11 @@ int Game::addPlayer(Player *p) {
 	return 0;
 }
 
+int Game::removePlayer(Player* p) {
+	players.erase(std::find(std::begin(players), std::end(players), p));
+	return 0;
+}
+
 // TODO should be bool
 int Game::setWord(Player &p, string word) {
 	if (&p != drawer) {

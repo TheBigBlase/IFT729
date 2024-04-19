@@ -25,7 +25,14 @@ Player::Player(value_t id, tcp::socket &&socket)
 	indexer = &GameIndexer::get();
 }
 
-Player::~Player() { std::cout << "[DTOR]" << std::endl; }
+Player::~Player() { 
+	std::cout << "[DTOR]" << std::endl;
+	if (game) {
+		game->removePlayer(this);
+	}
+	
+
+}
 
 // TODO remove cout when release
 std::vector<std::string> Player::sanitize_input(std::string input) {
@@ -61,7 +68,7 @@ void Player::handle_input(std::vector<std::string> in) {
 		game->broadcastPixel(std::atoi(in[1].c_str()),
 							 std::atoi(in[2].c_str()), *this);
 		break;
-	case MSG:
+	case MSSG:
 		game->guess(*this, in[1]);
 		// client has sent a message / submitted a guess
 		break;
