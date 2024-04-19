@@ -47,15 +47,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.alert("You found the right word !\n\
                 Congrats, you won this one !\n\n\
                 New game starting !\n\n");
-                window.location.href = "localhost:3000/guesser";
+                window.location.href = "/drawer";
 				break;
 			case "LOOSE":
                 window.alert("Someone found the right word !\n\
                 You didn't win this one.\n\n\
                 New game starting !\n\n");
-                var canvas = document.getElementById('canvas');
-                var context = canvas.getContext('2d');
-                context.clearRect(0, 0, canvas.width, canvas.height);
+				window.location.href = "/guesser"; //temporaire pour quand on va savoir qui est le drawer
+                //var canvas = document.getElementById('canvas');
+                //var context = canvas.getContext('2d');
+                //context.clearRect(0, 0, canvas.width, canvas.height);
 			case "ERR":
 				break;
 			case "ROOM": {
