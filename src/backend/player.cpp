@@ -220,8 +220,6 @@ void Player::on_read(beast::error_code ec, std::size_t bytes_transferred) {
 }
 
 void Player::do_write(const std::string msg) {
-	// END TIMER
-	Timer::get().stop();
 	ws.async_write(
 		boost::asio::buffer(msg.data(), msg.size()),
 		beast::bind_front_handler(&Player::on_write, shared_from_this()));

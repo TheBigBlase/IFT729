@@ -36,23 +36,9 @@ class Timer {
 			const std::chrono::duration<double, std::nano> time = post - pre;
 			if (!file.is_open())
 				std::cerr << "file not opened" << std::endl;
-			file << name << ":" << time.count() << "µs" << std::endl;
+			file << name << ":" << time.count() << "ns" << std::endl;
 			file.flush();
 			return res;
-		}
-
-		void start() {
-			started = true;
-			start_time = std::chrono::high_resolution_clock::now();
-		}
-
-		void stop() {
-			end_time = std::chrono::high_resolution_clock::now();
-			if (started) {
-				file << "time:" << std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count() << std::endl;
-				file.flush();
-				started = false;
-			}
 		}
 };
 
