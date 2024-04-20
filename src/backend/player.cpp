@@ -6,8 +6,8 @@
 #include "player.hpp"
 #include <iostream>
 
-// a player is an entity that handles everything a player do. 
-// Therefore, it can communicate via a tcp socket 
+// a player is an entity that handles everything a player do.
+// Therefore, it can communicate via a tcp socket
 // TODO move the socket to a whole new class, for readability.
 Player::Player(value_t id, tcp::socket &&socket)
 	: id{id}, ws{std::move(socket)}, name{std::format("Player {}", id)},
@@ -20,14 +20,17 @@ Player::Player(value_t id, tcp::socket &&socket)
 						" websocket-server-sync");
 		}));
 
-	// TODO async instead
 	std::cout << "[PLAYER] player #" << id << " has connected" << std::endl;
 	indexer = &GameIndexer::get();
 }
 
-Player::~Player() { std::cout << "[DTOR]" << std::endl; }
+Player::~Player() {
+	std::cout << "[DTOR]" << std::endl;
+	if (game) {
+		game->removePlayer(this);
+	}
+}
 
-// TODO remove cout when release
 std::vector<std::string> Player::sanitize_input(std::string input) {
 	size_t pos = input.find(delimiter);
 	std::string token;
@@ -35,7 +38,6 @@ std::vector<std::string> Player::sanitize_input(std::string input) {
 	std::vector<std::string> res{};
 	res.reserve(max_elts); // 3 elts max
 
-	std::cout << "[SANITIZE] ";
 	// split string
 	// "MSG:un tres beau msg"
 	// [0] : MSG
@@ -46,9 +48,7 @@ std::vector<std::string> Player::sanitize_input(std::string input) {
 		res.push_back(token);
 		input.erase(0, pos + delimiter.length());
 
-		std::cout << token << " ";
 	} while ((pos = input.find(delimiter)) != std::string::npos);
-	std::cout << std::endl;
 
 	return res;
 }
@@ -58,46 +58,36 @@ void Player::handle_input(std::vector<std::string> in) {
 	// TODO
 	switch (string_to_int(in[0].data())) {
 	case PX:
-		game->broadcastPixel(std::atoi(in[1].c_str()),
-							 std::atoi(in[2].c_str()), *this);
+		game->broadcastPixel(std::atoi(in[1].c_str()), std::atoi(in[2].c_str()),
+							 *this);
 		break;
 	case MSSG:
+		game->guess(*this, in[1]);
 		// client has sent a message / submitted a guess
 		break;
 	case JOIN:
-		std::cout << "[JOIN] player " << id << " joined game" << std::endl;
 		if (game == nullptr) {
 			game = indexer->search_game(std::atoi(in[1].c_str())).lock();
 		}
-		game->addPlayer(this);
-		is_in_game = true;
-		break;
-	// TODO rename to game
-	case NEWROOM:
-		if (!is_in_game) {
-			game = make_shared<Game>(this, num_games++);
-			indexer->add_game(game);
-			is_in_game = true;
-			send_room();
+
+		if (game != nullptr) {
+			game->addPlayer(this);
+			std::cout << "[JOIN] player " << id << " joined game"
+					  << game->getId() << std::endl;
+		} else {
+			do_write("ERR");
 		}
 		break;
-	case LEAVE:
-		// client has left the room
-		break;
-	case WIN:
-		// client has drawn a new px
-		// TODO should this be here ?
-		break;
-	case LOOSE:
-		// client has drawn a new px
-		// TODO should this be here ?
-		break;
-	case RECONN:
-		// send connection id
-		id = static_cast<value_t>(std::atoi(in[1].c_str()));
+	case NEWROOM:
+		if (!is_in_game) {
+			game = make_unique<Game>(this, num_games++);
+			indexer->add_game(game);
+			is_in_game = true;
+			send_drawer(game->getWordToGuess());
+			std::cout << "[DRAWER] " << game->getId() << std::endl;
+		}
 		break;
 	case ROOMLIST:
-		// send connection id
 		send_room();
 		break;
 	default:
@@ -115,19 +105,28 @@ void Player::send_room() {
 	auto rooms = indexer->get_last_10();
 	auto rooms_str = std::string{};
 
-	for(auto room : *rooms) {
-		rooms_str.append(std::format(":{}", room->getId()));
+	for (auto room : *rooms) {
+		rooms_str.append(std::format(":{}", room.lock()->getId()));
 	}
 
-	// if empty, wtf, send error
 	if (!rooms->empty()) {
 		// first colon already included
 		std::string res = std::format("ROOM{}", rooms_str);
 		do_write(res);
 	}
-
+	// if empty, wtf, send error
 	else
 		do_write("ERR");
+}
+
+// Outputs: all method that we use to communicate w/ a client.
+
+void Player::send_drawer(std::string word) {
+	do_write(std::format("DRAWER:{}:{}", game->getId(), word));
+}
+
+void Player::send_guesser() {
+	do_write(std::format("GUESSER:{}", game->getId()));
 }
 
 void Player::send_pixel(pixel_t x, pixel_t y) {
@@ -135,37 +134,22 @@ void Player::send_pixel(pixel_t x, pixel_t y) {
 }
 
 void Player::send_message(std::string msg) {
-	do_write(std::format("MSSG:{}", msg));
+	do_write(std::format("MSG:{}", msg));
 }
 
-// SERVER STUFF
-
-void Player::on_write(beast::error_code ec, std::size_t bytes_transferred) {
-	boost::ignore_unused(bytes_transferred);
-
-	if (ec) {
-		std::cerr << "write: " << ec.message() << "\n";
-	}
+void Player::send_win(std::string msg) { 
+	do_write(std::format("WIN:{}", msg));
 }
 
-void Player::on_read(beast::error_code ec, std::size_t bytes_transferred) {
-	boost::ignore_unused(bytes_transferred);
-	// This indicates that the session was closed
-	if (ec == websocket::error::closed)
-		return;
-
-	if (ec) {
-		std::cerr << "read: " << ec.message() << "\n";
-		return;
-	}
-
-	if (ws.got_text()) {
-		auto res =
-			sanitize_input(static_cast<const char *>(buffer.cdata().data()));
-		handle_input(res);
-	}
+void Player::send_lose(std::string winner, std::string msg) {
+	do_write(std::format("LOOSE:{}:{}", winner, msg));
 }
 
+// SERVER STUFF, as in, network, connection and stuff
+// here, almost everything as a do_X and a on_X.
+// do_X starts an async funciton, that calls back on_X.
+
+// dispatch an acceptor
 void Player::run() {
 	std::cout << "[RUN]" << std::endl;
 	boost::asio::dispatch(
@@ -175,25 +159,17 @@ void Player::run() {
 
 void Player::on_run() {
 	std::cout << "[ONRUN]" << std::endl;
-	try {
-		ws.async_accept(
-			beast::bind_front_handler(&Player::on_accept, shared_from_this()));
-
-		// This buffer will hold the incoming message
-	} // TODO remove excepts
-	catch (beast::system_error const &se) {
-		// This indicates that the session was closed
-		if (se.code() != websocket::error::closed)
-			std::cerr << "Error: " << se.code().location()
-					  << se.code().message() << std::endl;
-		delete this;
-	} catch (std::exception const &e) {
-		std::cerr << "Error: " << e.what() << std::endl;
-		delete this;
-	}
+	ws.async_accept(
+		beast::bind_front_handler(&Player::on_accept, shared_from_this()));
 }
 
-void Player::on_accept(beast::error_code) {
+// new socket!
+void Player::on_accept(beast::error_code ec) {
+	if (ec) {
+		std::cerr << "[ERROR] accept: " << ec.message() << "\n";
+		return;
+	}
+
 	std::cout << "[ACCEPT] new socket accepted" << std::endl;
 	do_write(std::format("CONN:{}", id)); // send id
 	do_read();
@@ -206,6 +182,24 @@ void Player::do_read() {
 	buffer.clear();
 }
 
+void Player::on_read(beast::error_code ec, std::size_t bytes_transferred) {
+	boost::ignore_unused(bytes_transferred);
+	// This indicates that the session was closed
+	if (ec == websocket::error::closed)
+		return;
+
+	if (ec) {
+		std::cerr << "[ERROR] read: " << ec.message() << "\n";
+		return;
+	}
+
+	if (ws.got_text()) {
+		auto res =
+			sanitize_input(static_cast<const char *>(buffer.cdata().data()));
+		handle_input(res);
+	}
+}
+
 void Player::do_write(const std::string msg) {
 	ws.async_write(
 		boost::asio::buffer(msg),
@@ -213,4 +207,12 @@ void Player::do_write(const std::string msg) {
 
 	// clear the buffer
 	buffer.clear();
+}
+
+void Player::on_write(beast::error_code ec, std::size_t bytes_transferred) {
+	boost::ignore_unused(bytes_transferred);
+
+	if (ec) {
+		std::cerr << "[ERROR] write: " << ec.message() << "\n";
+	}
 }

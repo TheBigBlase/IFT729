@@ -1,7 +1,5 @@
 #include "server.hpp"
 #include <boost/bind/bind.hpp>
-#include <boost/bind.hpp>
-#include <boost/asio/placeholders.hpp>
 #include <iostream>
 
 // TODO all is in main atm
@@ -21,7 +19,7 @@ void Server::run_forever() {
 
 	acceptor.async_accept(
 		*socket, boost::bind(&Server::on_accept, this, socket,
-							boost::asio::placeholders::error ));
+							boost::placeholders::_1));
 
 	// TODO
 	// Launch the session, transferring ownership of the socket

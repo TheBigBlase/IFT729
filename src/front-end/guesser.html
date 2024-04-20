@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GuessMyDraw - Guesser</title>
   <link rel="stylesheet" href="guesser.css">
+  <script src="utils/submit_word.js"></script>
+  <script src="utils/socket.js"></script>
+  <script src="utils/canvas.js"></script>
 </head>
 <body>
   <div class="container">
@@ -14,6 +17,7 @@
 
     <div class="guess-input">
       <input type="text" id="guessInput" placeholder="Entrez votre réponse">
+	  <!-- TODO submit through socket -->
       <button id="submitGuess">Soumettre</button>
     </div>
     <div class="messages">
@@ -23,7 +27,6 @@
     </div>
   </div>
 
-  <script src="utils/submit_word.js"></script>
 
 </body>
 </html>

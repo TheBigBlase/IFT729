@@ -1,83 +1,65 @@
 #include "game.hpp"
+#include "word_list.hpp"
 #include <iostream>
 #include <string>
 
 Game::Game(Player *p, value_t id)
-	: creator{p}, drawer{p}, state{WAITING_FOR_WORD}, id{id}, players{} {
+	: creator{p}, drawer{p}, id{id}, players{} {
 	players.push_back(p);
-	wordToGuess = "";
-	name = std::format("{}'s room", p->name);
+	wordToGuess = Word_list::get().get_random_word();
 }
 
-// TODO should be bool
-int Game::addPlayer(Player *p) {
+void Game::addPlayer(Player *p) {
 	if (std::find(std::begin(players), std::end(players), p) == players.end()) {
 		players.push_back(p);
-		return 1;
 	}
-
-	return 0;
 }
 
-// TODO should be bool
-int Game::setWord(Player &p, string word) {
-	if (&p != drawer) {
-		return 1;
-	}
-	if (state != WAITING_FOR_WORD) {
-		return 1;
-	}
-	wordToGuess = word;
-	state = ON_GOING;
-	return 0;
+void Game::removePlayer(Player* p) {
+	players.erase(std::find(std::begin(players), std::end(players), p));
 }
 
-// TODO should be bool
-int Game::guess(Player &p, string guessedWord) {
+void Game::guess(Player &p, string guessedWord) {
 	if (guessedWord == wordToGuess) {
 		return gameOver(p);
 	}
-	// TODO envoyer que t'es poche
 	guessList.push_back(pair<string, Player &>(guessedWord, p));
-	sendWordToAll("", p, guessedWord);
-	return 0;
+	sendWordToAll(p, guessedWord);
 }
 
-// TODO should be bool
-int Game::gameOver(Player &p) {
+void Game::gameOver(Player &p) {
+	std::cout << "[WINNER] : " << p.name << endl;
+	changeDrawer(p);
+	p.send_win(wordToGuess);
+	sendLoseToAll(p, wordToGuess);
+}
 
-	// TODO envoyer la bonne nouvelle
-	std::cout << "winner : " << p.name << endl;
+void Game::changeDrawer(Player &p){
+	wordToGuess = Word_list::get().get_random_word_different_from(wordToGuess);
 	drawer = &p;
-	wordToGuess = "";
-	state = WAITING_FOR_WORD;
-	// NOTE need ret value?
-	return 0;
 }
 
-// TODO should be bool
-int Game::sendWordToAll(string code, Player &player, string word) {
-	// Code qui va servir a envoyer les mots a tous
-	// TODO what's a code
-	for_each(std::begin(players), std::end(players),
-			 [&word, &player](Player *p) {
-				 if (p != &player)
-					 p->send_message(word);
-			 });
-	return 0;
+void Game::sendWordToAll(Player &player, string word) {
+	for (auto p : players) {
+		if (p != &player)
+			p->send_message(word);
+	};
 }
 
-// TODO should be bool
-// TODO dont ret 0 if we got nothing to return in the first place
-int Game::broadcastPixel(value_t x, value_t y, Player &author) {
+void Game::sendLoseToAll(Player &player, string word) {
+	for (auto p : players) {
+		if (p != &player)
+			p->send_lose(p->name, word);
+	};
+}
+
+void Game::broadcastPixel(value_t x, value_t y, Player &author) {
 	for (auto p : players) {
 		if (p != nullptr && p != &author)
 			p->send_pixel(x, y);
 	}
-
-	return 0;
 }
 
-std::string Game::getName() { return name; }
-
 value_t Game::getId() { return id; }
+
+std::string Game::getWordToGuess() { return wordToGuess; }

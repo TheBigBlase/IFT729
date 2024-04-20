@@ -13,7 +13,7 @@ set(src
 	game.cpp
 	main.cpp
 )
-
+set(CMAKE_CXX_STANDARD 23)
 find_package(Boost 1.70 COMPONENTS program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
@@ -21,4 +21,6 @@ set(CMAKE_DEBUG_POSTFIX d)
 add_executable(guessMyDraw ${src})
 set_target_properties(guessMyDraw PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 target_link_libraries(guessMyDraw LINK_PUBLIC ${Boost_LIBRARIES})
-target_compile_features(guessMyDraw PRIVATE cxx_std_20)
+target_compile_features(guessMyDraw PRIVATE cxx_std_23)
+
+configure_file("word_list.txt" "word_list.txt" COPYONLY)
