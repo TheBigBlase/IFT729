@@ -4,7 +4,7 @@
 #include <string>
 
 Game::Game(Player *p, value_t id)
-	: creator{p}, drawer{p}, id{id}, players{} {
+	: creator{ p }, drawer{ p }, id{ id }, players{}, creatorWaiting{true}{
 	players.push_back(p);
 	wordToGuess = Word_list::get().get_random_word();
 }
@@ -64,3 +64,10 @@ void Game::broadcastPixel(value_t x, value_t y, Player &author) {
 value_t Game::getId() { return id; }
 
 std::string Game::getWordToGuess() { return wordToGuess; }
+
+void Game::checkIfCreatorWaiting() {
+	if (creatorWaiting) {
+		creator->send_start();
+		creatorWaiting = false;
+	}
+}

@@ -8,21 +8,15 @@
 using namespace std;
 
 class Game {
-	// Constantes
-	enum State {
-		WAITING_FOR_WORD,
-		ON_GOING,
-	};
-
 	// Gestion des joueurs
 	// TODO smart pointer?
 	value_t id;
 	Player *creator;
 	Player *drawer;
 	std::vector<Player *> players;
+	bool creatorWaiting;
 
 	// Gestion de la partie
-	State state;
 	std::string wordToGuess;
 	vector<pair<string, Player &>>
 		guessList; // <guess, nomDuJoueur> on peut preallouer pour accelerer
@@ -42,6 +36,7 @@ class Game {
 	void changeDrawer(Player &);
 	std::string getWordToGuess();
 	value_t getId();
+	void checkIfCreatorWaiting();
 };
 
 // singleton. Has store pointer to all games.

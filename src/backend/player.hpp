@@ -33,6 +33,7 @@ class Player : public std::enable_shared_from_this<Player> {
 	void send_guesser();
 	void send_win(std::string);
 	void send_lose(std::string,std::string);
+	void send_start();
 
 	void run();
 

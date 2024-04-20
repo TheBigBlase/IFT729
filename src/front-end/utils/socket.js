@@ -9,6 +9,14 @@ function store_word(word) {
 	sessionStorage.setItem("word_to_guess", word);
 }
 
+function showPopup() {
+    document.getElementById('popupModal').style.display = 'block';
+}
+
+function cancel() {
+    window.location.href = "/";
+}
+
 document.addEventListener("DOMContentLoaded", function () {
 
 	if (window.location.href.endsWith("guesser")) {
@@ -95,19 +103,15 @@ document.addEventListener("DOMContentLoaded", function () {
 				// first is room to go
 				let room = res[1];
 				let word = res[2];
-				let ul = document.getElementById("roomList");
-				let li = document.createElement("li");
-				let a = document.createElement("a");
-				a.setAttribute("href", "drawer");
+				showPopup()
 				store_game_id(room);
 				store_word(word);
-				a.appendChild(document.createTextNode("Player " + room + "'s room"));
-				li.appendChild(a);
-				ul.appendChild(li);
-
+				
 				break;
+			}
+			case "START": {
+				window.location.href = "/drawer";
 			};
-
 			default:
 				break;
 		}
