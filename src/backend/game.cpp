@@ -66,7 +66,8 @@ value_t Game::getId() { return id; }
 std::string Game::getWordToGuess() { return wordToGuess; }
 
 void Game::checkIfCreatorWaiting() {
-	if (creatorWaiting) {
+	if (creatorWaiting && creator->name != "") {
+		// TODO ici on vérifie le nom car la game se delete pas, mais eventuellement on devrait pouvoir l'enlever
 		creator->send_start();
 		creatorWaiting = false;
 	}
