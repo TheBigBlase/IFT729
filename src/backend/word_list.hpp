@@ -22,8 +22,8 @@ class Word_list {
 			file.open(file_name);
 			// last line doesnt have \n necessarly
 			number_lines = std::count(std::istreambuf_iterator<char>(file),
-									  std::istreambuf_iterator<char>(), '\n') +
-						   1;
+									  std::istreambuf_iterator<char>(),
+									  '\n') + 1;
 
 			file.clear();
 			file.seekg(0);

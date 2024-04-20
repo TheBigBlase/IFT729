@@ -4,6 +4,7 @@
 #include "game.hpp"
 #include "messages.hpp"
 #include "player.hpp"
+#include "timer.hpp"
 #include <iostream>
 
 // a player is an entity that handles everything a player do.
@@ -58,19 +59,22 @@ void Player::handle_input(std::vector<std::string> in) {
 	// TODO
 	switch (string_to_int(in[0].data())) {
 	case PX:
-		game->broadcastPixel(std::atoi(in[1].c_str()), std::atoi(in[2].c_str()),
-							 *this);
+		Timer::get().tester([&]() mutable {
+			game->broadcastPixel(std::atoi(in[1].c_str()),
+								 std::atoi(in[2].c_str()), *this);
+			return 0;
+		}, "broadcastPx");
 		break;
 	case MSSG:
-		game->guess(*this, in[1]);
+
+		Timer::get().tester([&]() mutable {
+			game->guess(*this, in[1]); return 0; }, "guess");
 		// client has sent a message / submitted a guess
 		break;
 	case JOIN:
 		if (game == nullptr) {
-			if (indexer->search_game(std::atoi(in[1].c_str())).lock()){
-				game = indexer->search_game(std::atoi(in[1].c_str())).lock();
+			if ((game = indexer->search_game(std::atoi(in[1].c_str())).lock()))
 				game->checkIfCreatorWaiting();
-			}
 		}
 
 		if (game != nullptr) {
@@ -83,8 +87,11 @@ void Player::handle_input(std::vector<std::string> in) {
 		break;
 	case NEWROOM:
 		if (!is_in_game) {
-			game = make_shared<Game>(this, num_games++);
-			indexer->add_game(game);
+			Timer::get().tester([&]() mutable {
+					game = make_shared<Game>(this, num_games++);
+					indexer->add_game(game);
+					return game;
+				});
 			is_in_game = true;
 			send_drawer(game->getWordToGuess());
 			std::cout << "[DRAWER] " << game->getId() << std::endl;
@@ -202,13 +209,19 @@ void Player::on_read(beast::error_code ec, std::size_t bytes_transferred) {
 	}
 
 	if (ws.got_text()) {
-		auto res =
-			sanitize_input(static_cast<const char *>(buffer.cdata().data()));
+		// BEGIN TIMER
+		auto res = Timer::get().tester([&]() mutable {
+			return Player::sanitize_input(
+				static_cast<const char *>(buffer.cdata().data()));
+		}, "sanitize_input");
+		// sanitize_input(static_cast<const char *>(buffer.cdata().data()));
 		handle_input(res);
 	}
 }
 
 void Player::do_write(const std::string msg) {
+	// END TIMER
+	Timer::get().stop();
 	ws.async_write(
 		boost::asio::buffer(msg.data(), msg.size()),
 		beast::bind_front_handler(&Player::on_write, shared_from_this()));
