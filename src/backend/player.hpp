@@ -23,7 +23,9 @@ class Player : public std::enable_shared_from_this<Player> {
 	Player(value_t, tcp::socket &&);
 	~Player();
 	std::string name;
-	bool is_in_game;
+	bool is_in_game; // so that a player cant spam create rooms
+
+	// send methods
 	void send_message(std::string);
 	void send_pixel(pixel_t, pixel_t);
 	void send_room();
@@ -45,6 +47,7 @@ class Player : public std::enable_shared_from_this<Player> {
 	std::vector<std::string> sanitize_input(std::string);
 	void handle_input(std::vector<std::string>);
 
+	// everything to send info through a websocket
 	void on_run();
 	void on_accept(beast::error_code);
 	void do_accept();

@@ -3,12 +3,10 @@
 #include <iostream>
 #include <string>
 
-
 Game::Game(Player *p, value_t id)
 	: creator{p}, drawer{p}, id{id}, players{} {
 	players.push_back(p);
 	wordToGuess = Word_list::get().get_random_word();
-	name = std::format("{}'s room", p->name);
 }
 
 void Game::addPlayer(Player *p) {
@@ -22,8 +20,6 @@ void Game::removePlayer(Player* p) {
 }
 
 void Game::guess(Player &p, string guessedWord) {
-
-	std::cout << "[GUESS] " << guessedWord << " " << wordToGuess << std::endl;
 	if (guessedWord == wordToGuess) {
 		return gameOver(p);
 	}
@@ -32,10 +28,11 @@ void Game::guess(Player &p, string guessedWord) {
 }
 
 void Game::gameOver(Player &p) {
-	std::cout << "winner : " << p.name << endl;
-	p.send_win(wordToGuess);
-	sendLoseToAll(p, wordToGuess);
+	std::cout << "[WINNER] : " << p.name << endl;
+	string prev(wordToGuess);
 	changeDrawer(p);
+	p.send_win(wordToGuess);
+	sendLoseToAll(p, prev);
 }
 
 void Game::changeDrawer(Player &p){
@@ -44,19 +41,17 @@ void Game::changeDrawer(Player &p){
 }
 
 void Game::sendWordToAll(Player &player, string word) {
-	for_each(std::begin(players), std::end(players),
-			 [&word, &player](Player *p) {
-				 if (p != &player) //en comment pour lisntant, a voir quest ce quon  fait avec ca
-					p->send_message(word);
-			 });
+	for (auto p : players) {
+		if (p != &player)
+			p->send_message(word);
+	};
 }
 
-void Game::sendLoseToAll(Player& player, string word) {
-	for_each(std::begin(players), std::end(players),
-		[&word, &player](Player* p) {
-			if (p != &player) //en comment pour lisntant, a voir quest ce quon  fait avec ca
-				p->send_lose(p->name, word);
-		});
+void Game::sendLoseToAll(Player &player, string word) {
+	for (auto p : players) {
+		if (p != &player)
+			p->send_lose(p->name, word);
+	};
 }
 
 void Game::broadcastPixel(value_t x, value_t y, Player &author) {
@@ -65,8 +60,6 @@ void Game::broadcastPixel(value_t x, value_t y, Player &author) {
 			p->send_pixel(x, y);
 	}
 }
-
-std::string Game::getName() { return name; }
 
 value_t Game::getId() { return id; }
 

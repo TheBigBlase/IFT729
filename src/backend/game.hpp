@@ -23,7 +23,6 @@ class Game {
 
 	// Gestion de la partie
 	State state;
-	std::string name;
 	std::string wordToGuess;
 	vector<pair<string, Player &>>
 		guessList; // <guess, nomDuJoueur> on peut preallouer pour accelerer
@@ -41,15 +40,14 @@ class Game {
 	void setWord(Player &player, string word);
 	void gameOver(Player &); // player ?
 	void changeDrawer(Player &);
-	std::string getName();
 	std::string getWordToGuess();
 	value_t getId();
 };
 
+// singleton. Has store pointer to all games.
 class GameIndexer {
 	private:
 		GameIndexer() : games{}{};
-		// TODO clean games when everyone leaves the lobby
 		std::vector<std::pair<std::shared_ptr<Game>, value_t>> games;
 
 	  public:
