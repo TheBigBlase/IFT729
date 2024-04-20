@@ -220,7 +220,7 @@ void Player::do_read() {
 
 void Player::do_write(const std::string msg) {
 	ws.async_write(
-		boost::asio::buffer(msg),
+		boost::asio::buffer(msg.data(), msg.size()),
 		beast::bind_front_handler(&Player::on_write, shared_from_this()));
 
 	// clear the buffer

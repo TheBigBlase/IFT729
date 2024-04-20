@@ -50,10 +50,17 @@ document.addEventListener("DOMContentLoaded", function () {
 				break;
 			}
 			case "LOOSE":
-				window.alert("Someone found the right word !\n" + 
+				if (window.location.href.endsWith("drawer")) {
+					window.alert("Someone found your  word : "+ res[2] +" !\n" +
+					"New game starting !\n\n"
+				);
+				}
+				else {
+					window.alert("Someone found the right word : "+ res[2] +" !\n" + 
 					"You didn't win this one.\n\n" + 
 					"New game starting !\n\n"
 				);
+				}
 				// we become guesser. If we already were, reset window.
 				window.location.href = "/guesser";
 			case "ERR":
@@ -69,8 +76,12 @@ document.addEventListener("DOMContentLoaded", function () {
 					ul = document.getElementById("roomList");
 					let li = document.createElement("li");
 					let a = document.createElement("a");
-					store_game_id(elt);
-					a.setAttribute("href", "guesser");
+					a.setAttribute("href", "#null");
+					a.onclick = function() { 
+						console.log(this.getAttribute("valeur")) 
+						store_game_id(this.getAttribute("valeur"));
+						window.location.href = "/guesser";};
+					a.setAttribute("valeur",elt);
 					a.appendChild(document.createTextNode("Room n°" + elt));
 					li.appendChild(a);
 					ul.appendChild(li);
@@ -88,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				let li = document.createElement("li");
 				let a = document.createElement("a");
 				a.setAttribute("href", "drawer");
-				store_game_id(id);
+				store_game_id(room);
 				store_word(word);
 				a.appendChild(document.createTextNode("Player " + room + "'s room"));
 				li.appendChild(a);

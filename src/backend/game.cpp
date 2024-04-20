@@ -33,9 +33,9 @@ void Game::guess(Player &p, string guessedWord) {
 
 void Game::gameOver(Player &p) {
 	std::cout << "winner : " << p.name << endl;
-	changeDrawer(p);
 	p.send_win(wordToGuess);
 	sendLoseToAll(p, wordToGuess);
+	changeDrawer(p);
 }
 
 void Game::changeDrawer(Player &p){
