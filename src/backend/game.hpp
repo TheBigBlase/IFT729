@@ -43,7 +43,7 @@ class Game {
 class GameIndexer {
 	private:
 		GameIndexer() : games{}{};
-		std::vector<std::pair<std::shared_ptr<Game>, value_t>> games;
+		std::vector<std::pair<std::weak_ptr<Game>, value_t>> games;
 
 	  public:
 		GameIndexer(GameIndexer const &) = delete;
@@ -63,7 +63,16 @@ class GameIndexer {
 		}
 
 		void add_game(std::shared_ptr<Game> g) {
-			games.push_back({g, g->getId()});
+			auto space =
+				std::find_if(std::begin(games), std::end(games),
+							 [](std::pair<std::weak_ptr<Game>, value_t> it) {
+								 return it.first.expired();
+							 });
+
+			if (space == std::end(games))
+				games.push_back({std::weak_ptr<Game>{g}, g->getId()});
+			else
+				*space = {std::weak_ptr<Game>{g}, g->getId()};
 		}
 
 		std::vector<std::weak_ptr<Game>> *get_last_10() {

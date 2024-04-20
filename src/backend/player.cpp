@@ -81,7 +81,7 @@ void Player::handle_input(std::vector<std::string> in) {
 		break;
 	case NEWROOM:
 		if (!is_in_game) {
-			game = make_unique<Game>(this, num_games++);
+			game = make_shared<Game>(this, num_games++);
 			indexer->add_game(game);
 			is_in_game = true;
 			send_drawer(game->getWordToGuess());
