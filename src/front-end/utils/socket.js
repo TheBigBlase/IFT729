@@ -71,7 +71,10 @@ document.addEventListener("DOMContentLoaded", function () {
 				}
 				// we become guesser. If we already were, reset window.
 				window.location.href = "/guesser";
+				break;
 			case "ERR":
+				window.alert("ERROR : going to main page");
+				window.location.href = "/";
 				break;
 			case "ROOM": {
 				res = res.slice(1, undefined);

@@ -67,8 +67,10 @@ void Player::handle_input(std::vector<std::string> in) {
 		break;
 	case JOIN:
 		if (game == nullptr) {
-			game = indexer->search_game(std::atoi(in[1].c_str())).lock();
-			game->checkIfCreatorWaiting();
+			if (indexer->search_game(std::atoi(in[1].c_str())).lock()){
+				game = indexer->search_game(std::atoi(in[1].c_str())).lock();
+				game->checkIfCreatorWaiting();
+			}
 		}
 
 		if (game != nullptr) {
@@ -107,7 +109,8 @@ void Player::send_room() {
 	auto rooms_str = std::string{};
 
 	for (auto room : *rooms) {
-		rooms_str.append(std::format(":{}", room.lock()->getId()));
+		if(!room.expired())
+			rooms_str.append(std::format(":{}", room.lock()->getId()));
 	}
 
 	if (!rooms->empty()) {
