@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GuessMyDraw - index</title>
   <link rel="stylesheet" href="drawer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
   <div class="container">
@@ -20,4 +21,14 @@
   <script src="utils/add_game.js"></script>
   <script src="utils/get_game_list.js"></script>
 </body>
+<!-- Pop-up fait par chatGPT-->
+<div id="popupModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <p>WAITING for another player to join the game
+          <i class="fa fa-spinner fa-spin"></i>
+         </p>
+        <button onclick="cancel()">Cancel</button>
+    </div>
+</div>
 </html>

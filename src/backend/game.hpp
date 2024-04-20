@@ -8,21 +8,15 @@
 using namespace std;
 
 class Game {
-	// Constantes
-	enum State {
-		WAITING_FOR_WORD,
-		ON_GOING,
-	};
-
 	// Gestion des joueurs
 	// TODO smart pointer?
 	value_t id;
 	Player *creator;
 	Player *drawer;
 	std::vector<Player *> players;
+	bool creatorWaiting;
 
 	// Gestion de la partie
-	State state;
 	std::string wordToGuess;
 	vector<pair<string, Player &>>
 		guessList; // <guess, nomDuJoueur> on peut preallouer pour accelerer
@@ -42,13 +36,14 @@ class Game {
 	void changeDrawer(Player &);
 	std::string getWordToGuess();
 	value_t getId();
+	void checkIfCreatorWaiting();
 };
 
 // singleton. Has store pointer to all games.
 class GameIndexer {
 	private:
 		GameIndexer() : games{}{};
-		std::vector<std::pair<std::shared_ptr<Game>, value_t>> games;
+		std::vector<std::pair<std::weak_ptr<Game>, value_t>> games;
 
 	  public:
 		GameIndexer(GameIndexer const &) = delete;
@@ -68,7 +63,16 @@ class GameIndexer {
 		}
 
 		void add_game(std::shared_ptr<Game> g) {
-			games.push_back({g, g->getId()});
+			auto space =
+				std::find_if(std::begin(games), std::end(games),
+							 [](std::pair<std::weak_ptr<Game>, value_t> it) {
+								 return it.first.expired();
+							 });
+
+			if (space == std::end(games))
+				games.push_back({std::weak_ptr<Game>{g}, g->getId()});
+			else
+				*space = {std::weak_ptr<Game>{g}, g->getId()};
 		}
 
 		std::vector<std::weak_ptr<Game>> *get_last_10() {

@@ -68,6 +68,7 @@ void Player::handle_input(std::vector<std::string> in) {
 	case JOIN:
 		if (game == nullptr) {
 			game = indexer->search_game(std::atoi(in[1].c_str())).lock();
+			game->checkIfCreatorWaiting();
 		}
 
 		if (game != nullptr) {
@@ -80,7 +81,7 @@ void Player::handle_input(std::vector<std::string> in) {
 		break;
 	case NEWROOM:
 		if (!is_in_game) {
-			game = make_unique<Game>(this, num_games++);
+			game = make_shared<Game>(this, num_games++);
 			indexer->add_game(game);
 			is_in_game = true;
 			send_drawer(game->getWordToGuess());
@@ -145,6 +146,10 @@ void Player::send_lose(std::string winner, std::string msg) {
 	do_write(std::format("LOOSE:{}:{}", winner, msg));
 }
 
+void Player::send_start() {
+	do_write("START:");
+}
+
 // SERVER STUFF, as in, network, connection and stuff
 // here, almost everything as a do_X and a on_X.
 // do_X starts an async funciton, that calls back on_X.
@@ -202,7 +207,7 @@ void Player::on_read(beast::error_code ec, std::size_t bytes_transferred) {
 
 void Player::do_write(const std::string msg) {
 	ws.async_write(
-		boost::asio::buffer(msg),
+		boost::asio::buffer(msg.data(), msg.size()),
 		beast::bind_front_handler(&Player::on_write, shared_from_this()));
 
 	// clear the buffer

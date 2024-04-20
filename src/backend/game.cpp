@@ -4,7 +4,7 @@
 #include <string>
 
 Game::Game(Player *p, value_t id)
-	: creator{p}, drawer{p}, id{id}, players{} {
+	: creator{ p }, drawer{ p }, id{ id }, players{}, creatorWaiting{true}{
 	players.push_back(p);
 	wordToGuess = Word_list::get().get_random_word();
 }
@@ -29,9 +29,10 @@ void Game::guess(Player &p, string guessedWord) {
 
 void Game::gameOver(Player &p) {
 	std::cout << "[WINNER] : " << p.name << endl;
+	string prev(wordToGuess);
 	changeDrawer(p);
 	p.send_win(wordToGuess);
-	sendLoseToAll(p, wordToGuess);
+	sendLoseToAll(p, prev);
 }
 
 void Game::changeDrawer(Player &p){
@@ -63,3 +64,11 @@ void Game::broadcastPixel(value_t x, value_t y, Player &author) {
 value_t Game::getId() { return id; }
 
 std::string Game::getWordToGuess() { return wordToGuess; }
+
+void Game::checkIfCreatorWaiting() {
+	if (creatorWaiting && creator->name != "") {
+		// TODO ici on vérifie le nom car la game se delete pas, mais eventuellement on devrait pouvoir l'enlever
+		creator->send_start();
+		creatorWaiting = false;
+	}
+}
