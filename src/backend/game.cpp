@@ -23,7 +23,6 @@ void Game::guess(Player &p, string guessedWord) {
 	if (guessedWord == wordToGuess) {
 		return gameOver(p);
 	}
-	guessList.push_back(pair<string, Player &>(guessedWord, p));
 	sendWordToAll(p, guessedWord);
 }
 

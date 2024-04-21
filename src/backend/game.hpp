@@ -18,9 +18,6 @@ class Game {
 
 	// Gestion de la partie
 	std::string wordToGuess;
-	vector<pair<string, Player &>>
-		guessList; // <guess, nomDuJoueur> on peut preallouer pour accelerer
-				   // surment
 
   public:
 	// TODO use smart pointer, probably
