@@ -28,8 +28,9 @@ class Timer {
 		}
 
 		// i didnt find func traits, so for void funcs, lamda passed has to
-		// return a value.
-		template <class F, class... Args> auto tester(F f, Args &&...args, std::string name = "tester") {
+		// return a value. This is taken from our class notes.
+		template <class F, class... Args> 
+		auto tester(F f, Args &&...args, std::string name = "tester") {
 			auto pre = std::chrono::high_resolution_clock::now();
 			auto res = f(std::forward<Args>(args)...);
 			auto post = std::chrono::high_resolution_clock::now();

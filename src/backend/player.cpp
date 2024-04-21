@@ -56,7 +56,6 @@ std::vector<std::string> Player::sanitize_input(std::string input) {
 
 // handle every case that a client can send
 void Player::handle_input(std::vector<std::string> in) {
-	// TODO
 	switch (string_to_int(in[0].data())) {
 	case PX:
 		Timer::get().tester([&]() mutable {

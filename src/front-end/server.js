@@ -6,8 +6,7 @@ const cors = require('cors')
 
 app.use(
   cors({
-	  // TODO change that to more precise
-	  origin: "*",
+	  origin: "localhost",
   })
 )
 app.use(express.static(__dirname));

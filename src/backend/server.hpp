@@ -6,7 +6,6 @@
 
 #include "player.hpp"
 #include <cstdint>
-#include <vector>
 
 namespace net = boost::asio;
 namespace ip = boost::asio::ip;
@@ -28,7 +27,6 @@ class Server {
 	ip::address address;
 	net::io_context context;
 	tcp::acceptor acceptor;
-	std::vector<Player::sptr> players;
 
 	void on_accept(tcp::socket*, const boost::system::error_code&);
 };
